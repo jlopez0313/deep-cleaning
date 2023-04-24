@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->required();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('attended_by')->nullable();
+            $table->unsignedBigInteger('attended_by')->required();
             $table->foreign('attended_by')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedBigInteger('approved_by')->nullable();
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
             $table->string('firma')->nullable();
 
-            $table->unsignedBigInteger('estados_id')->nullable();
+            $table->unsignedBigInteger('estados_id')->required();
             $table->foreign('estados_id')->references('id')->on('estados')->onDelete('cascade');
 
             $table->timestamps();

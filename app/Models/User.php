@@ -47,4 +47,8 @@ class User extends Authenticatable
     public function rol() {
         return $this->hasOne(Roles::class, 'id', 'roles_id');
     }
+
+    public function local() {
+        return $this->hasOne(Locales::class, 'id', 'locales_id');
+    }
 }

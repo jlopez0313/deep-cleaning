@@ -32,5 +32,16 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
 
     // Categorias
     Route::apiResource('categorias', 'App\Http\Controllers\api\v1\CategoriasController');
+    
+    // Locales
+    Route::apiResource('locales', 'App\Http\Controllers\api\v1\LocalesController');
 
+    // Visitas
+    Route::apiResource('visitas', 'App\Http\Controllers\api\v1\VisitasController');
+    Route::prefix('visitas')->group( function () {
+        Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
+        Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
+        Route::put('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
+        Route::put('evaluar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'evaluar']);
+    });
 });

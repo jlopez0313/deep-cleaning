@@ -14,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return \App\Models\User::with('rol')->latest()->paginate( config('general.paginate') );
+        return \App\Models\User::with('rol')
+                ->latest()
+                ->paginate( config('general.paginate') );
     }
 
     /**
