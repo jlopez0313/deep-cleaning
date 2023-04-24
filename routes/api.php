@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\v1\UserController as UserV1;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,5 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 */
 
-Route::apiResource('v1/users', UserV1::class)->only(['index', 'show'])->middleware('auth:sanctum');
 Route::post('v1/login', [App\Http\Controllers\Api\V1\LoginController::class, 'login']);
+
+Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
+
+    // Roles
+    Route::apiResource('roles', 'App\Http\Controllers\api\v1\RolesController');
+    
+    // Usuarios
+    Route::apiResource('users', 'App\Http\Controllers\api\v1\UserController');
+
+    // Categorias
+    Route::apiResource('categorias', 'App\Http\Controllers\api\v1\CategoriasController');
+
+});
