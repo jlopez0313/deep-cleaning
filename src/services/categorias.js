@@ -2,8 +2,10 @@ import {baseApi} from './api';
 
 const module = '/categorias'
 
-export const getCategorias = async() => {
-    return await baseApi.get( module )
+export const getCategorias = async(params) => {
+    const queryParams = new URLSearchParams(params).toString();
+
+    return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
         if (error.response) {
             throw new Error(error.response.data.message)
@@ -14,7 +16,6 @@ export const getCategorias = async() => {
         }
     })
 }
-
 
 export const findCategoria = async( id ) => {
     return await baseApi.get(module + '/' + id)

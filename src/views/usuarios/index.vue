@@ -3,60 +3,71 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in list" :key="index">
-                            <td> {{ item.name }}</td>
-                            <td> {{ item.email }}</td>
-                            <td class="d-flex align-items-center justify-content-center"> 
-                                <router-link :to="`usuarios/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm"> <i class="mdi mdi-pencil-outline"></i> </router-link>
-                                <router-link :to="`usuarios/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4"> <i class="mdi mdi-delete-outline"></i>  </router-link>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <Datatable
+                modulo="usuarios"
+                :headers="headers"
+                :items="items"
+                :serverItemsLength="serverItemsLength"
+                @dataChange="loadFromServer($event)"
+            ></Datatable>
         </div>
     </div>
 
     <Fab :action="'/usuarios/create'"></Fab>
 </template>
 
-<script setup>
+<script setup lang="jsx" >
+import Datatable from '@/components/Datatable.vue';
 import Fab from '@/components/Fab.vue';
 import PageTitle from '@/components/PageTitle.vue';
-import { ref, onBeforeMount } from 'vue';
+import { ref } from 'vue';
 import {getUsuarios}  from '@/services/usuarios';
 
 const title = 'Usuarios'
-
 const breadcrumb = [
     {title: title, active: true}
 ]
+const headers = [
+    { text: "Rol", value: "rol.rol" },
+    { text: "Nombre", value: "name" },
+    { text: "Email", value: "email" },
+    { text: "Acciones", value: "acciones" }
+]
+
 
 const error = ref('');
-const list = ref([]);
+const items = ref([]);
+const serverItemsLength = ref(0);
 
-onBeforeMount(async () => {
+
+const loadFromServer = async( serverOptions ) => {
     try {
-        const { data } = await getUsuarios();
-        list.value = data.data;
+        const { data } = await getUsuarios( serverOptions );
+        items.value = data.data;
+        serverItemsLength.value = data.total;
     } catch (err){
         error.value = err.message;
     }
-})
+}
+</script>
 
+<script  lang="jsx">
+    const test = () => {
+        alert('hola')
+        
+    }
+
+    export default {
+        methods: {
+            test() {
+                alert('hola')
+            }
+        }
+    }
 </script>
 
 <style scoped>
+
 i {
     font-size: 1rem;
 }

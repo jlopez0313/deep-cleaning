@@ -3,27 +3,13 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Local</th>
-                            <th>creado por</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in list" :key="index">
-                            <td> {{ item.local }}</td>
-                            <td> {{ item.creador.name }}</td>
-                            <td class="d-flex align-items-center">
-                                <router-link :to="`locales/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm"> <i class="mdi mdi-pencil-outline"></i> </router-link>
-                                <router-link :to="`locales/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4"> <i class="mdi mdi-delete-outline"></i>  </router-link>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <Datatable
+                modulo="locales"
+                :headers="headers"
+                :items="items"
+                :serverItemsLength="serverItemsLength"
+                @dataChange="loadFromServer($event)"
+            ></Datatable>
         </div>
     </div>
 
@@ -31,28 +17,34 @@
 </template>
 
 <script setup>
+import Datatable from '@/components/Datatable.vue';
 import Fab from '@/components/Fab.vue';
 import PageTitle from '@/components/PageTitle.vue';
-import { ref, onBeforeMount } from 'vue';
+import { ref } from 'vue';
 import {getLocales}  from '@/services/locales';
 
 const title = 'Locales'
-
 const breadcrumb = [
     {title: title, active: true}
 ]
+const headers = [
+    { text: "Local", value: "local" },
+    { text: "Acciones", value: "acciones" }
+]
 
-const list = ref([]);
+const error = ref('');
+const items = ref([]);
+const serverItemsLength = ref(0);
 
-onBeforeMount(async () => {
+const loadFromServer = async( serverOptions ) => {
     try {
-        const { data } = await getLocales();
-        list.value = data.data;
+        const { data } = await getLocales(serverOptions);
+        items.value = data.data;
+        serverItemsLength.value = data.total;
     } catch (err){
         error.value = err.message;
     }
-})
-
+}
 </script>
 
 <style scoped>

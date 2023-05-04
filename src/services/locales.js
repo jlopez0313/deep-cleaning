@@ -15,8 +15,10 @@ export const getAllLocales = async() => {
     })
 }
 
-export const getLocales = async() => {
-    return await baseApi.get( module )
+export const getLocales = async(params) => {
+    const queryParams = new URLSearchParams(params).toString();
+
+    return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
         if (error.response) {
             throw new Error(error.response.data.message)
@@ -27,7 +29,6 @@ export const getLocales = async() => {
         }
     })
 }
-
 
 export const findLocal = async( id ) => {
     return await baseApi.get(module + '/' + id)

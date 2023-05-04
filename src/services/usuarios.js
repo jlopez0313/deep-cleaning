@@ -2,8 +2,10 @@ import {baseApi} from './api';
 
 const module = '/users'
 
-export const getUsuarios = async() => {
-    return await baseApi.get( module )
+export const getUsuarios = async( params ) => {
+    const queryParams = new URLSearchParams(params).toString();
+    
+    return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
         if (error.response) {
             throw new Error(error.response.data.message)

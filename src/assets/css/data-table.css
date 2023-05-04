@@ -1,0 +1,32 @@
+.vue3-easy-data-table__header tr {
+	padding: 20px;
+	background-color: rgb(241 245 249 );
+	--easy-table-header-item-padding: 15px;
+}
+
+.vue3-easy-data-table__header tr th {
+	background-color: transparent !important;
+	font-size: .875rem;
+}
+
+.vue3-easy-data-table__body tr td{
+	--easy-table-body-item-padding: 15px;
+	color: #8687a7;
+	font-size: .875rem;
+}
+
+.vue3-easy-data-table__footer {
+	font-size: .875rem !important;
+}
+
+.pagination__rows-per-page {
+	display: flex !important;
+}
+
+.pagination__items-index {
+	flex-grow: 1;
+}
+
+.buttons-pagination .item.button.active {
+	/*--40dd4f07: #3b5de7;*/
+}
