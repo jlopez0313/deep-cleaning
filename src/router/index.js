@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 const routes = [
     {
         path: '/',
-        component: () => import('@/layouts/side-menu/Menu.vue'),
+        component: () => import('@/layouts/Layout.vue'),
         children: [
             {
                 path: '',
@@ -16,7 +16,7 @@ const routes = [
     },
     {
         path: '/usuarios',
-        component: () => import('@/layouts/side-menu/Menu.vue'),
+        component: () => import('@/layouts/Layout.vue'),
         children: [
             {
                 path: '',
@@ -34,7 +34,7 @@ const routes = [
     },
     {
         path: '/categorias',
-        component: () => import('@/layouts/side-menu/Menu.vue'),
+        component: () => import('@/layouts/Layout.vue'),
         children: [
             {
                 path: '',
@@ -52,7 +52,7 @@ const routes = [
     },
     {
         path: '/locales',
-        component: () => import('@/layouts/side-menu/Menu.vue'),
+        component: () => import('@/layouts/Layout.vue'),
         children: [
             {
                 path: '',
@@ -70,7 +70,7 @@ const routes = [
     },
     {
         path: '/visitas',
-        component: () => import('@/layouts/side-menu/Menu.vue'),
+        component: () => import('@/layouts/Layout.vue'),
         children: [
             {
                 path: '',
@@ -90,7 +90,7 @@ const routes = [
 
 const router = createRouter({
     mode: 'history',
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.VITE_BASE_URL),
     routes: routes,
 })
 
