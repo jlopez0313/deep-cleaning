@@ -60,7 +60,10 @@ class VisitasController extends Controller
         $data->approver = $visita->creator;
         $data->local = $visita->local;
         $data->estado = $visita->estado;
-        $data->checklist = $visita->checklist;
+
+        foreach($visita->checklist as $key => $item) {
+            $data->checklist[$key] = $item->categoria;
+        }
 
         return $data;
     }

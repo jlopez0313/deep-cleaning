@@ -49,6 +49,6 @@ class User extends Authenticatable
     }
 
     public function local() {
-        return $this->hasOne(Locales::class, 'id', 'locales_id');
+        return $this->hasOne(Local::class, 'id', 'locales_id');
     }
 }

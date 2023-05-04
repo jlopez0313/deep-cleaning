@@ -25,23 +25,36 @@ Route::post('v1/login', [App\Http\Controllers\Api\V1\LoginController::class, 'lo
 Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
 
     // Roles
+    Route::prefix('roles')->group( function () {
+        Route::get('all', ['App\Http\Controllers\api\v1\RolesController', 'all']);
+    });
     Route::apiResource('roles', 'App\Http\Controllers\api\v1\RolesController');
     
     // Usuarios
+    Route::prefix('users')->group( function () {
+        Route::get('byRol/{rol}', ['App\Http\Controllers\api\v1\UserController', 'byRol']);
+    });
     Route::apiResource('users', 'App\Http\Controllers\api\v1\UserController');
 
     // Categorias
+    Route::prefix('categorias')->group( function () {
+        Route::get('all', ['App\Http\Controllers\api\v1\CategoriasController', 'all']);
+    });
     Route::apiResource('categorias', 'App\Http\Controllers\api\v1\CategoriasController');
     
     // Locales
+    Route::prefix('locales')->group( function () {
+        Route::get('all', ['App\Http\Controllers\api\v1\LocalesController', 'all']);
+    });
     Route::apiResource('locales', 'App\Http\Controllers\api\v1\LocalesController');
 
     // Visitas
-    Route::apiResource('visitas', 'App\Http\Controllers\api\v1\VisitasController');
     Route::prefix('visitas')->group( function () {
         Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
         Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
         Route::put('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
         Route::put('evaluar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'evaluar']);
     });
+    Route::apiResource('visitas', 'App\Http\Controllers\api\v1\VisitasController');
+
 });

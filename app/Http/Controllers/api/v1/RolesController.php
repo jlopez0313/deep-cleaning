@@ -47,4 +47,9 @@ class RolesController extends Controller
     {
         // 
     }
+
+    public function all()
+    {
+        return \App\Models\Roles::latest()->get();
+    }
 }

@@ -70,4 +70,9 @@ class UserController extends Controller
         $user->delete();
         return $user;
     }
+
+    public function byRol( $rol )
+    {
+        return \App\Models\User::with('rol')->where('roles_id', $rol)->orderBy('name')->get();
+    }
 }

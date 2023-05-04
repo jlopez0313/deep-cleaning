@@ -13,7 +13,7 @@ class LocalesController extends Controller
      */
     public function index()
     {
-        return \App\Models\Local::with('managers', 'visitas')
+        return \App\Models\Local::with('creador', 'managers', 'visitas')
                 ->latest()
                 ->paginate( config('general.paginate') );
     }
@@ -40,11 +40,11 @@ class LocalesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Local $local)
+    public function show(Local $locale)
     {
-        $data = $local;
-        $data->managers = $local->managers;
-        $data->visitas = $local->visitas;
+        $data = $locale;
+        $data->managers = $locale->managers;
+        $data->visitas = $locale->visitas;
 
         return $data;
     }
@@ -76,5 +76,10 @@ class LocalesController extends Controller
     {
         $locale->delete();
         return $locale;
+    }
+
+    public function all()
+    {
+        return \App\Models\Local::latest()->get();
     }
 }

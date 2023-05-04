@@ -57,4 +57,9 @@ class CategoriasController extends Controller
         $categoria->delete();
         return $categoria;
     }
+
+    public function all()
+    {
+        return \App\Models\Categoria::latest()->get();
+    }
 }
