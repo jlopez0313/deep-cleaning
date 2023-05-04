@@ -11,9 +11,9 @@ class RolesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return \App\Models\Roles::latest()->paginate( config('general.paginate') );
+        return \App\Models\Roles::latest()->paginate( $request->rowsPerPage );
     }
 
     /**

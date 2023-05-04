@@ -12,11 +12,11 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         return \App\Models\User::with('rol')
                 ->latest()
-                ->paginate( config('general.paginate') );
+                ->paginate( $request->rowsPerPage );
     }
 
     /**

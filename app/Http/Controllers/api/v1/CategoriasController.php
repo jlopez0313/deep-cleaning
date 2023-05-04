@@ -11,9 +11,9 @@ class CategoriasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return \App\Models\Categoria::latest()->paginate( config('general.paginate') );
+        return \App\Models\Categoria::latest()->paginate( $request->rowsPerPage );
     }
 
     /**

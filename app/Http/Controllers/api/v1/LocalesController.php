@@ -11,11 +11,11 @@ class LocalesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         return \App\Models\Local::with('creador', 'managers', 'visitas')
                 ->latest()
-                ->paginate( config('general.paginate') );
+                ->paginate( $request->rowsPerPage );
     }
 
     /**

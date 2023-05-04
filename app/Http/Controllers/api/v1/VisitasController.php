@@ -12,11 +12,11 @@ class VisitasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
                 ->latest()
-                ->paginate( config('general.paginate') );
+                ->paginate( $request->rowsPerPage );
     }
 
     /**
