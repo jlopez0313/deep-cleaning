@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class CategoriasController extends Controller
 {
+    public function validateRequest(Request $request)
+    {
+        return $request->validate([
+            'categoria' => 'required',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,6 +28,8 @@ class CategoriasController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validateRequest($request);
+
         $categoria = \App\Models\Categoria::create([
             'categoria' => $request->categoria,
             'created_at' => \Carbon\Carbon::now(),
@@ -43,6 +52,8 @@ class CategoriasController extends Controller
      */
     public function update(Request $request, Categoria $categoria)
     {
+        $this->validateRequest($request);
+
         $categoria->categoria = $request->categoria;
         $categoria->save();
 

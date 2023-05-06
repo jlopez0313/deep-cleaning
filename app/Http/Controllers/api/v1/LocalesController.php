@@ -3,11 +3,23 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LocalesRequest;
 use Illuminate\Http\Request;
 use App\Models\Local;
 
 class LocalesController extends Controller
 {
+    public function validateRequest(Request $request)
+    {
+        return $request->validate([
+            'local' => 'required',
+            'direccion' => 'required',
+            'latitud' => 'required',
+            'longitud' => 'required',
+            'foto' => 'required',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,20 +33,35 @@ class LocalesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LocalesRequest $request)
     {
-        $local = \App\Models\Local::create([
-            'created_by' => \Auth::id(),
-            'local' => $request->local,
-            'direccion' => $request->direccion,
-            'latitud' => $request->latitud,
-            'longitud' => $request->longitud,
-            'foto' => $request->foto,
-            'created_at' => \Carbon\Carbon::now(),
-            'updated_at' => \Carbon\Carbon::now(),
-        ]);
+        try{
+            \DB::beginTransaction();
 
-        return $local;
+            $path = '';
+            if ( $request->foto ) {
+                $file = $request->foto;
+                $path = $file->store('locales');
+            }
+    
+            $local = \App\Models\Local::create([
+                'created_by' => \Auth::id(),
+                'local' => $request->local,
+                'direccion' => $request->direccion,
+                'latitud' => $request->latitud,
+                'longitud' => $request->longitud,
+                'foto' => $path,
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
+            ]);
+
+            \DB::commit();
+    
+            return $local;
+        } catch (Exception $ex) {
+            \DB::rollback();
+            return $ex;
+        }
     }
 
     /**
@@ -52,14 +79,22 @@ class LocalesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Local $locale)
+    public function update(LocalesRequest $request, Local $locale)
     {
         $locale->created_by  = \Auth::id();
         $locale->local       = $request->local;
         $locale->direccion   = $request->direccion;
         $locale->latitud     = $request->latitud;
         $locale->longitud    = $request->longitud;
-        $locale->foto        = $request->foto;
+        
+        if ( $request->foto ) {
+            $file = $request->foto;
+            $path = $file->store('locales');
+            $locale->foto = $path;
+
+            \Storage::delete($request->oldPhoto);
+        }
+
         $locale->save();
 
         $data = $locale;

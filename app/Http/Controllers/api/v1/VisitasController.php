@@ -9,6 +9,30 @@ use Illuminate\Http\Request;
 
 class VisitasController extends Controller
 {
+    public function validateRequest(Request $request)
+    {
+        return $request->validate([
+            'local' => 'required',
+            'limpiador' => 'required',
+            'fecha' => 'required',
+        ]);
+    }
+
+    public function validateFinalizar(Request $request)
+    {
+        return $request->validate([
+            'estados_id' => 'required',
+        ]);
+    }
+
+    public function validateEvaluar(Request $request)
+    {
+        return $request->validate([
+            'approved_by' => 'required',
+            'estados_id' => 'required',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,29 +48,39 @@ class VisitasController extends Controller
      */
     public function store(Request $request)
     {
-        $visita = \App\Models\Visitas::create([
-            'locales_id' => $request->locales_id,
-            'created_by' => \Auth::id(),
-            'attended_by' => $request->attended_by,
-            'fecha' => $request->fecha,
-            'latitud' => $request->latitud,
-            'longitud' => $request->longitud,
-            'estados_id' => $request->estados_id,
-            'created_at' => \Carbon\Carbon::now(),
-            'updated_at' => \Carbon\Carbon::now(),
-        ]);
+        try {
+            $this->validateRequest($request);
 
-        $list = [];
-        foreach( $request->categorias as $categoria ) {
-            $list[] = [
-                'categorias_id' => $categoria->id,
-                'visitas_id' => $visita->id,
-            ];
+            \DB::beginTransaction();
+
+            $visita = \App\Models\Visitas::create([
+                'locales_id' => $request->local['id'],
+                'created_by' => \Auth::id(),
+                'attended_by' => $request->limpiador['id'],
+                'fecha' => $request->fecha,
+                'latitud' => $request->latitud,
+                'longitud' => $request->longitud,
+                'estados_id' => 1,
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
+            ]);
+
+            $list = [];
+            foreach( $request->checkList as $categoria ) {
+                $list[] = [
+                    'categorias_id' => $categoria->id,
+                    'visitas_id' => $visita->id,
+                ];
+            }
+
+            count( $list ) > 0 && \App\Models\Checklist::create( $list );
+            \DB::commit();
+
+            return $visita;
+        } catch (Exception $ex) {
+            \DB::rollback();
+            return $ex;
         }
-
-        \App\Models\Checklist::create( $list );
-
-        return $visita;
     }
 
     /**
@@ -74,18 +108,17 @@ class VisitasController extends Controller
      */
     public function update(Request $request, Visitas $visita)
     {
-        $visita->locales_id     = $request->locales_id;
-        $visita->created_by     = $request->created_by;
-        $visita->attended_by    = $request->attended_by;
-        $visita->approved_by    = $request->approved_by;
+        $this->validateRequest($request);
+
+        $visita->locales_id     = $request->local['id'];
+        $visita->attended_by    = $request->$request->limpiador['id'];
         $visita->fecha          = $request->fecha;
         $visita->latitud        = $request->latitud;
         $visita->longitud       = $request->longitud;
-        $visita->estados_id     = $request->estados_id;
         $visita->save();
 
         $list = [];
-        foreach( $request->checklist as $checklist ) {
+        foreach( $request->checkList as $checklist ) {
             $list[] = [
                 'id' => $checklist->id,
                 'categorias_id' => $checklist->categorias_id,
@@ -93,7 +126,7 @@ class VisitasController extends Controller
             ];
         }
 
-        \App\Models\Checklist::create( $list );
+        count( $list ) > 0 && \App\Models\Checklist::create( $list );
 
         $data = $visita;
         $data->attender = $visita->attender;
@@ -118,6 +151,7 @@ class VisitasController extends Controller
 
     public function iniciar(Request $request, Visitas $visita)
     {
+
         $visita->latitud    = $request->latitud;
         $visita->longitud   = $request->longitud;
         $visita->started_at = \Carbon\Carbon::now();
@@ -136,6 +170,8 @@ class VisitasController extends Controller
 
     public function finalizar(Request $request, Visitas $visita)
     {
+        $this->validateFinalizar($request);
+
         $visita->estados_id = $request->estados_id;
         $visita->finished_at = \Carbon\Carbon::now();
         $visita->save();
@@ -164,6 +200,8 @@ class VisitasController extends Controller
 
     public function evaluar( Request $request, Visitas $visita)
     {
+        $this->validateEvaluar($request);
+
         $visita->approved_by    = $request->approved_by;
         $visita->estados_id     = $request->estados_id;
         $visita->observaciones  = $request->observaciones;

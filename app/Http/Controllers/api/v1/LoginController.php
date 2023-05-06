@@ -8,9 +8,19 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+
+    public function validateRequest(Request $request)
+    {
+        return $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'device' => 'required'
+        ]);
+    }
+
     public function login(Request $request)
     {
-        $this->validateLogin($request);
+        $this->validateRequest($request);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
@@ -22,15 +32,6 @@ class LoginController extends Controller
             'token' => $request->user()->createToken($request->device)->plainTextToken,
             'user' => $request->user()->with('rol', 'local')->first(),
             'message' => 'Success'
-        ]);
-    }
-
-    public function validateLogin(Request $request)
-    {
-        return $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'device' => 'required'
         ]);
     }
 }

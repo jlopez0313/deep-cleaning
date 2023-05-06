@@ -6,9 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function validateRequest(Request $request)
+    {
+        return $request->validate([
+            'roles_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|email|'.Rule::unique(User::class),
+            'password' => 'required',
+        ]);
+    }
+    
+    public function validateUpdate(Request $request)
+    {
+        return $request->validate([
+            'roles_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|email|'.Rule::unique(User::class)->ignore($request->id),
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,6 +44,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validateRequest($request);
+
+        $hasUser = 
+
         $user = \App\Models\User::create([
             'roles_id' => $request->roles_id,
             'name' => $request->name,
@@ -51,10 +75,16 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->validateUpdate($request);
+
         $user->roles_id = $request->roles_id;
         $user->name     = $request->name;
         $user->email    = $request->email;
-        $user->password = Hash::make( $request->password );
+
+        if ( $request->password ) {
+            $user->password = Hash::make( $request->password );
+        }
+
         $user->save();
 
         $data = $user;
