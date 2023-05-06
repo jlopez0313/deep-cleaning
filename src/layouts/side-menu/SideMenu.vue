@@ -31,7 +31,7 @@
                     </router-link> </li>
                     <li> <router-link to="/categorias" @click="hideMenu()"> 
                         <i class="mdi mdi-calendar-check"></i>
-                        Categorias
+                        Servicios
                     </router-link> </li>
                     <li> <router-link to="/locales" @click="hideMenu()"> 
                         <i class="mdi mdi-store"></i>

@@ -9,8 +9,15 @@
         table-class-name="customize-table"
     >
         <template #item-acciones="item">
-            <router-link :to="`/${modulo}/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm"> <i class="mdi mdi-pencil-outline"></i> </router-link>
-            <router-link :to="`/${modulo}/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4"> <i class="mdi mdi-delete-outline"></i>  </router-link>
+            <router-link v-if="acciones.includes('ver')" :to="`/${modulo}/show/${item.id}`" title="Ver" class="btn btn-outline-secondary btn-sm">
+                <i class="mdi mdi-magnify"></i> 
+            </router-link>
+            <router-link v-if="acciones.includes('editar')" :to="`/${modulo}/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm ms-4">
+                <i class="mdi mdi-pencil-outline"></i>
+            </router-link>
+            <router-link v-if="acciones.includes('eliminar')" :to="`/${modulo}/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4">
+                <i class="mdi mdi-delete-outline"></i>
+            </router-link>
         </template>
     </EasyDataTable>
 </template>
@@ -23,6 +30,7 @@ const emit = defineEmits()
 
 const props = defineProps({
     modulo: '',
+    acciones: [],
     headers: [],
     items: [],
     serverItemsLength: 0

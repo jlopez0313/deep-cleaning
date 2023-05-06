@@ -4,3 +4,7 @@
 .metismenu .router-link-active i {
     color: #3b5de7 !important;
 }
+
+.text-invalid {
+    font-size: .75rem;
+}

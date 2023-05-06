@@ -63,6 +63,10 @@ const routes = [
                 component: () => import('@/views/locales/form.vue')
             },
             {
+                path: 'show/:id',
+                component: () => import('@/views/locales/show.vue')
+            },
+            {
                 path: ':id',
                 component: () => import('@/views/locales/form.vue')
             }
@@ -79,6 +83,10 @@ const routes = [
             {
                 path: 'create',
                 component: () => import('@/views/visitas/form.vue')
+            },
+            {
+                path: 'show/:id',
+                component: () => import('@/views/visitas/show.vue')
             },
             {
                 path: ':id',

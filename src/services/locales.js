@@ -56,8 +56,16 @@ export const newLocal = async( formData ) => {
     })
 }
 
-export const updateLocal = async( formData ) => {
-    return await baseApi.put(module + '/' + formData.id, formData)
+export const updateLocal = async( data ) => {
+    let formData = new FormData();
+
+    Object.keys( data ).forEach( key => {
+        formData.append( key, data[key] )
+    })
+
+    formData.append('_method', 'PUT')
+
+    return await baseApi.post(module + '/' + data.id, formData)
     .catch((error) => {
         if (error.response) {
             throw new Error(error.response.data.message)
