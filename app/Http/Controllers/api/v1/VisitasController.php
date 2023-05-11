@@ -15,6 +15,8 @@ class VisitasController extends Controller
             'local' => 'required',
             'limpiador' => 'required',
             'fecha' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
         ]);
     }
 
@@ -36,10 +38,11 @@ class VisitasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index($id, Request $request)
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
-                ->latest()
+                ->where('attended_by', $id)
+                ->orderBy('fecha', 'desc')
                 ->paginate( $request->rowsPerPage );
     }
 
@@ -48,32 +51,28 @@ class VisitasController extends Controller
      */
     public function store(Request $request)
     {
+        \DB::beginTransaction();
+
         try {
             $this->validateRequest($request);
 
-            \DB::beginTransaction();
+            if ( $request->tipo == 'date') {
+                $visitaRepo = new \App\Repositories\VisitaRepository();
+                $visita = $visitaRepo->store( $request );
+            } else {
+                $daysInMonth = \Carbon\Carbon::parse($request->fecha)->daysInMonth;
+                
+                for ($day = 1; $day <= $daysInMonth; $day++) {
+                    $tmpFecha = $request->fecha;
 
-            $visita = \App\Models\Visitas::create([
-                'locales_id' => $request->local['id'],
-                'created_by' => \Auth::id(),
-                'attended_by' => $request->limpiador['id'],
-                'fecha' => $request->fecha,
-                'latitud' => $request->latitud,
-                'longitud' => $request->longitud,
-                'estados_id' => 1,
-                'created_at' => \Carbon\Carbon::now(),
-                'updated_at' => \Carbon\Carbon::now(),
-            ]);
+                    $visitaRepo = new \App\Repositories\VisitaRepository();
+                    $request->fecha = $tmpFecha . '-' . $day;
+                    $visita = $visitaRepo->store( $request );
 
-            $list = [];
-            foreach( $request->checkList as $categoria ) {
-                $list[] = [
-                    'categorias_id' => $categoria->id,
-                    'visitas_id' => $visita->id,
-                ];
+                    $request->fecha = $tmpFecha;
+                }
             }
-
-            count( $list ) > 0 && \App\Models\Checklist::create( $list );
+            
             \DB::commit();
 
             return $visita;
@@ -96,7 +95,9 @@ class VisitasController extends Controller
         $data->estado = $visita->estado;
 
         foreach($visita->checklist as $key => $item) {
-            $data->checklist[$key] = $item->categoria;
+            $checklist = $item;
+            $checklist->categoria = $item->categoria;
+            $data->checklist[$key] = $checklist;
         }
 
         return $data;
@@ -110,33 +111,36 @@ class VisitasController extends Controller
     {
         $this->validateRequest($request);
 
-        $visita->locales_id     = $request->local['id'];
-        $visita->attended_by    = $request->$request->limpiador['id'];
         $visita->fecha          = $request->fecha;
-        $visita->latitud        = $request->latitud;
-        $visita->longitud       = $request->longitud;
+        $visita->locales_id     = $request->local['id'];
+        $visita->attended_by    = $request->limpiador['id'];
+        $visita->start_time     = $request->start_time;
+        $visita->end_time       = $request->end_time;
+        $visita->estados_id     = $request->estados_id;
         $visita->save();
 
-        $list = [];
-        foreach( $request->checkList as $checklist ) {
-            $list[] = [
-                'id' => $checklist->id,
-                'categorias_id' => $checklist->categorias_id,
-                'visitas_id' => $visita->id,
-            ];
+        \App\Models\Checklist::whereIn('id', $request->deletedServices)->delete();
+
+        foreach( $request->checkList as $servicio ) {
+            if ( !$servicio['id'] ) {
+                $checklist = \App\Models\Checklist::create([
+                    'categorias_id' => $servicio['categorias_id'],
+                    'visitas_id' => $visita->id,
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now(),
+                ]);
+            } else {
+                $checklist = \App\Models\Checklist::find($servicio['id'])
+                ->update([
+                    'categorias_id' => $servicio['categorias_id'],
+                    'visitas_id' => $visita->id,
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now(),
+                ]);
+            }
         }
 
-        count( $list ) > 0 && \App\Models\Checklist::create( $list );
-
-        $data = $visita;
-        $data->attender = $visita->attender;
-        $data->creator = $visita->creator;
-        $data->approver = $visita->creator;
-        $data->local = $visita->local;
-        $data->estado = $visita->estado;
-        $data->checklist = $visita->checklist;
-
-        return $data;
+        return $visita;
     }
 
     /**
@@ -222,6 +226,15 @@ class VisitasController extends Controller
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
                 ->where($field, $user->id)
+                ->latest()
+                ->get();
+    }
+
+    public function paraHoy($field, User $user)
+    {
+        return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
+                ->where($field, $user->id)
+                ->where('fecha', \Carbon\Carbon::now()->toDateString() )
                 ->latest()
                 ->get();
     }

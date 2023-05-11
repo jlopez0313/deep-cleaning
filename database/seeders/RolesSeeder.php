@@ -14,22 +14,32 @@ class RolesSeeder extends Seeder
     {
         \App\Models\Roles::insert([
             [
-                'rol' => 'SuperAdmin',    
+                'rol' => 'SuperAdmin',
+                'slug' => 'ROOT',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             [
-                'rol' => 'Administrador',    
+                'rol' => 'Manager',
+                'slug' => 'ADMI',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             [
-                'rol' => 'Supervisor',    
+                'rol' => 'Supervisor',
+                'slug' => 'SUPE',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             [
-                'rol' => 'Limpiador',    
+                'rol' => 'Limpiador',
+                'slug' => 'CLEA',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
+            ],
+            [
+                'rol' => 'Dueño',
+                'slug' => 'OWNE',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ],

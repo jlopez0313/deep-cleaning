@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LocalesRequest;
+use App\Http\Resources\LocalResource;
 use Illuminate\Http\Request;
 use App\Models\Local;
 
@@ -25,7 +26,7 @@ class LocalesController extends Controller
      */
     public function index(Request $request)
     {
-        return \App\Models\Local::with('creador', 'managers', 'visitas')
+        return \App\Models\Local::with('creador', 'usuarios.usuario.rol', 'visitas')
                 ->latest()
                 ->paginate( $request->rowsPerPage );
     }
@@ -35,8 +36,9 @@ class LocalesController extends Controller
      */
     public function store(LocalesRequest $request)
     {
+        \DB::beginTransaction();
+
         try{
-            \DB::beginTransaction();
 
             $path = '';
             if ( $request->foto ) {
@@ -55,8 +57,17 @@ class LocalesController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ]);
 
+        // Asignando Usuarios al Local
+            $request->usuarios = json_decode($request->usuarios);
+            foreach( $request->usuarios as $user ) {
+                \App\Models\LocalesUsers::create([
+                    'locales_id' => $local->id,
+                    'user_id' => $user->id
+                ]);
+            }
+            
             \DB::commit();
-    
+
             return $local;
         } catch (Exception $ex) {
             \DB::rollback();
@@ -67,13 +78,10 @@ class LocalesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Local $locale)
+    public function show( $id )
     {
-        $data = $locale;
-        $data->managers = $locale->managers;
-        $data->visitas = $locale->visitas;
-
-        return $data;
+        $locale = \App\Models\Local::with('usuarios.usuario.rol')->findOrFail( $id );
+        return $locale;
     }
 
     /**
@@ -81,27 +89,56 @@ class LocalesController extends Controller
      */
     public function update(LocalesRequest $request, Local $locale)
     {
-        $locale->created_by  = \Auth::id();
-        $locale->local       = $request->local;
-        $locale->direccion   = $request->direccion;
-        $locale->latitud     = $request->latitud;
-        $locale->longitud    = $request->longitud;
-        
-        if ( $request->foto ) {
-            $file = $request->foto;
-            $path = $file->store('locales');
-            $locale->foto = $path;
+        \DB::beginTransaction();
 
-            \Storage::delete($request->oldPhoto);
+        try {
+            $locale->created_by  = \Auth::id();
+            $locale->local       = $request->local;
+            $locale->direccion   = $request->direccion;
+            $locale->latitud     = $request->latitud;
+            $locale->longitud    = $request->longitud;
+            
+            if ( $request->foto ) {
+                $file = $request->foto;
+                $path = $file->store('locales');
+                $locale->foto = $path;
+    
+                \Storage::delete($request->oldPhoto);
+            }
+    
+            $locale->save();
+    
+        // Asignando Usuarios al Local
+            $request->usuarios = json_decode($request->usuarios);
+            
+            $usuarios = array_map( 
+                function ( $user ){ 
+                    return $user->id;
+                },
+                $request->usuarios
+            );
+
+
+            \App\Models\LocalesUsers::whereIn('user_id', $usuarios)
+                ->where('locales_id', $locale->id)
+                ->delete();
+
+            foreach( $request->usuarios as $user ) {
+                \App\Models\LocalesUsers::create([
+                    'locales_id' => $locale->id,
+                    'user_id' => $user->id
+                ]);
+            }
+
+            \DB::commit();
+
+            $locale;
+            return $locale;
+
+        } catch (Exception $ex) {
+            \DB::rollback();
+            return $ex;
         }
-
-        $locale->save();
-
-        $data = $locale;
-        $data->managers = $locale->managers;
-        $data->visitas = $locale->visitas;
-
-        return $data;
     }
 
     /**

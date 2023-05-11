@@ -11,9 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('locales_id')->nullable()->after('id');
+        Schema::create('locales_users', function (Blueprint $table) {
+            $table->id();
+
+            $table->unsignedBigInteger('locales_id')->required();
             $table->foreign('locales_id')->references('id')->on('locales')->onDelete('cascade');
+
+            $table->unsignedBigInteger('user_id')->required();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -22,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('locales_users', function (Blueprint $table) {
             //
         });
     }

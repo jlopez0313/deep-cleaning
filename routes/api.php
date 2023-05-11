@@ -24,6 +24,12 @@ Route::post('v1/login', ['App\Http\Controllers\Api\V1\LoginController', 'login']
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
 
+    // Estados
+    Route::prefix('estados')->group( function () {
+        Route::get('all', ['App\Http\Controllers\api\v1\EstadosController', 'all']);
+    });
+    Route::apiResource('estados', 'App\Http\Controllers\api\v1\EstadosController');
+
     // Roles
     Route::prefix('roles')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\RolesController', 'all']);
@@ -32,7 +38,8 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
     
     // Usuarios
     Route::prefix('users')->group( function () {
-        Route::get('byRol/{rol}', ['App\Http\Controllers\api\v1\UserController', 'byRol']);
+        Route::get('all', ['App\Http\Controllers\api\v1\UserController', 'all']);
+        Route::post('byRol', ['App\Http\Controllers\api\v1\UserController', 'byRol']);
     });
     Route::apiResource('users', 'App\Http\Controllers\api\v1\UserController');
 
@@ -51,6 +58,9 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
 
     // Visitas
     Route::prefix('visitas')->group( function () {
+        Route::get('/{id}', ['App\Http\Controllers\api\v1\VisitasController', 'index']);
+        Route::get('/show/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'show']);
+        Route::get('para-hoy/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'paraHoy']);
         Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
         Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
         Route::put('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);

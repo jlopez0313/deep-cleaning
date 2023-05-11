@@ -13,19 +13,12 @@ class UserController extends Controller
     public function validateRequest(Request $request)
     {
         return $request->validate([
-            'roles_id' => 'required',
-            'name' => 'required',
-            'email' => 'required|email|'.Rule::unique(User::class),
-            'password' => 'required',
-        ]);
-    }
-    
-    public function validateUpdate(Request $request)
-    {
-        return $request->validate([
+            'parent_id' => Rule::notIn([$request->id]),
             'roles_id' => 'required',
             'name' => 'required',
             'email' => 'required|email|'.Rule::unique(User::class)->ignore($request->id),
+            'password' => 'required',
+            'password' => Rule::requiredIf(!$request->id),
         ]);
     }
 
@@ -49,6 +42,7 @@ class UserController extends Controller
         $hasUser = 
 
         $user = \App\Models\User::create([
+            'parent_id' => $request->parent_id,
             'roles_id' => $request->roles_id,
             'name' => $request->name,
             'email' => $request->email,
@@ -75,8 +69,9 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $this->validateUpdate($request);
-
+        $this->validateRequest($request);
+        
+        $user->parent_id = $request->parent_id;
         $user->roles_id = $request->roles_id;
         $user->name     = $request->name;
         $user->email    = $request->email;
@@ -101,8 +96,13 @@ class UserController extends Controller
         return $user;
     }
 
-    public function byRol( $rol )
+    public function byRol(Request $request)
     {
-        return \App\Models\User::with('rol')->where('roles_id', $rol)->orderBy('name')->get();
+        return \App\Models\User::with('rol')->whereIn('roles_id', $request->roles)->orderBy('name')->get();
+    }
+
+    public function all()
+    {
+        return \App\Models\User::latest()->get();
     }
 }

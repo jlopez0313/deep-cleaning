@@ -20,8 +20,8 @@ class Local extends Model
         'foto',
     ];
     
-    public function managers() {
-        return $this->hasMany(User::class, 'locales_id');
+    public function usuarios() {
+        return $this->hasMany(LocalesUsers::class, 'locales_id');
     }
 
     public function creador() {

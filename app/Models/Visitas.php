@@ -17,6 +17,8 @@ class Visitas extends Model
         'attended_by',
         'approved_by',
         'fecha',
+        'start_time',
+        'end_time',
         'latitud',
         'longitud',
         'estados_id',

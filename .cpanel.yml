@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/deepquick/api.deepquick.com/
+    - /bin/rsync -av * $DEPLOYPATH

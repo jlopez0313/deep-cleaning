@@ -9,13 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Checklist extends Model
 {
     use SoftDeletes, HasFactory;
-    protected $table = 'checklist';
 
+    protected $table = 'checklist';
     protected $fillable = [
         'categorias_id',
         'visitas_id',
-        'done',
-        'evidencia',
     ];
 
     public function categoria() {
