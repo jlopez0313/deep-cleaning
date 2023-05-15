@@ -23,7 +23,7 @@ export const LoginPage = () => {
       </IonContent>
       <IonFooter>
         <IonToolbar class='ion-text-center'>
-            © 2023 Qovex.
+            © 2023.
         </IonToolbar>
       </IonFooter>
     </IonPage>
