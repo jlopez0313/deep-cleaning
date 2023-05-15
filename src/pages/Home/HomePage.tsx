@@ -1,13 +1,23 @@
 import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonImg, IonLabel, IonListHeader, IonMenuButton, IonNote, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import Home from '@/components/home/Home';
 import styles from './HomePage.module.scss';
 import { getUser } from '@/helpers/onboarding';
 import { notificationsOutline, syncOutline } from 'ionicons/icons';
+import { useEffect } from 'react';
 
 const HomePage: React.FC = () => {
 
   const {user} = getUser();
+
+  const history = useHistory();
+
+  useEffect( () =>  {
+
+    if ( !user ) {
+      // history.replace('/login')
+    }
+  }, [])
 
   return (
     <IonPage>

@@ -25,6 +25,7 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import { clipboardOutline, ellipsisHorizontalOutline, homeOutline } from 'ionicons/icons';
 
+import { getUser } from './helpers/onboarding';
 import UIContext from "./context/Context";
 import { useContext } from 'react';
 
@@ -47,7 +48,7 @@ const App: React.FC = () => {
             <Route path="/visita/:id" component={VisitaPage} />
             <Route path="/login" component={LoginPage} />
             <Route exact path="/">
-                <Redirect to="/home" />
+                <Redirect to="/login" />
             </Route>
           </IonRouterOutlet>
 
