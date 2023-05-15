@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 */
 
-Route::post('v1/login', ['App\Http\Controllers\Api\v1\LoginController', 'login']);
+Route::post('v1/login', ['App\Http\Controllers\api\v1\LoginController', 'login']);
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
 
@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
     // Locales
     Route::prefix('locales')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\LocalesController', 'all']);
-        Route::post('{id}', ['App\Http\Controllers\Api\v1\LocalesController', 'update']);
+        Route::post('{id}', ['App\Http\Controllers\api\v1\LocalesController', 'update']);
     });
     Route::apiResource('locales', 'App\Http\Controllers\api\v1\LocalesController');
 
