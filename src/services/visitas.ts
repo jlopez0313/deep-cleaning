@@ -5,9 +5,12 @@ const module = '/visitas'
 
 export const myJob = async () => {
     const {user} = getUser();
+    const { get } = baseApi();
 
-    return await baseApi.get( module + '/para-hoy/' + 'attended_by/' + user?.id )
+    return await get( module + '/para-hoy/' + 'attended_by/' + user?.id )
     .catch((error) => {
+        console.log( 'wrong:', error );
+
         if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -19,8 +22,12 @@ export const myJob = async () => {
 }
 
 export const findVisita = async( id: number ) => {
-    return await baseApi.get(module + '/show/' + id)
+    const { get } = baseApi();
+
+    return await get(module + '/show/' + id)
     .catch((error) => {
+        console.log( 'wrong:', error );
+
         if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {

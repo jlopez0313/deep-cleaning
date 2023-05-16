@@ -26,10 +26,10 @@ const HomePage: React.FC = () => {
           <IonImg className={`${styles.mx1} ${styles.mt1}`} src='/assets/images/logo-sm-dark.png' style={{height: '50px', width: '50px'}} />
           
           <IonButtons slot='end'>
-            <IonButton>
+            <IonButton type='button'>
               <IonIcon icon={notificationsOutline} className='text-white' />
             </IonButton>
-            <IonButton>
+            <IonButton type='button'>
               <IonIcon icon={syncOutline} className='text-white' />
             </IonButton>
 

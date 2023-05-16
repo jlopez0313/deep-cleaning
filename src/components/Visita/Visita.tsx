@@ -113,7 +113,7 @@ export const Visita = ( {visita}: Props ) => {
                                 { service.categoria.categoria }
                             </IonItem>
                             <IonImg src={ service.evidencia } />
-                            <IonButton expand='block' onClick={() => takePicture( idx )}>
+                            <IonButton type='button' expand='block' onClick={() => takePicture( idx )}>
                                 <IonIcon icon={attachOutline} slot="start" />
                                 Attach Evidence
                             </IonButton>

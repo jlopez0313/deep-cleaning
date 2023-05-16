@@ -1,9 +1,9 @@
 import { IonLoading, useIonLoading, IonCol, IonGrid, IonRow, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonButton, IonImg } from '@ionic/react';
 import { IonInput, IonItem, IonList } from '@ionic/react';
 import styles from './Login.module.scss';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { login } from '../../services/auth';
-import { setUser } from '@/helpers/onboarding';
+import { setUser, clearUser } from '@/helpers/onboarding';
 import { useHistory } from 'react-router-dom'
 
 export const Login = () => {
@@ -14,7 +14,9 @@ export const Login = () => {
     const [present, dismiss] = useIonLoading();
     const history = useHistory();
 
-    const doLogin = async () => {
+    const doLogin = async (evt: any) => {
+        evt.preventDefault();
+
         try {
             present({
                 message: 'Loading ...',
@@ -25,6 +27,7 @@ export const Login = () => {
                 password,
                 device: 'app'
             });
+
             setUser( data );            
             history.replace('/home')
 
@@ -34,6 +37,10 @@ export const Login = () => {
             dismiss();
         }
     }
+
+    useEffect(() => {
+        clearUser()
+    }, [])
 
     return (
         <div className={styles.layout}>
@@ -63,7 +70,7 @@ export const Login = () => {
                                         ></IonInput>
                                     </IonItem>
                                 </IonList>
-                                    <IonButton className='ion-margin-top' expand="block" onClick={() => doLogin()}> Log In </IonButton>
+                                    <IonButton type='button' className='ion-margin-top' expand="block" onClick={(evt) => doLogin(evt)}> Log In </IonButton>
 
                                     <IonLoading trigger="open-loading" message="Dismissing after 3 seconds..." duration={3000} />
 

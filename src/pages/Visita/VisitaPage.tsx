@@ -6,7 +6,7 @@ import UIContext from "@/context/Context";
 import { qrCodeOutline } from 'ionicons/icons';
 import { useParams } from 'react-router';
 import { findVisita } from '../../services/visitas';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+// import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 type Props = {
     title: string;
@@ -26,8 +26,8 @@ export const VisitaPage = () => {
     }
 
     const dataToScan = async () => {
-        const data = await BarcodeScanner.scan();
-        console.log( data );
+        // const data = await BarcodeScanner.scan();
+        // console.log( data );
         // alert(JSON.stringify(data));
         // this.setState({ stringEncoded: data.text })
     };
@@ -46,7 +46,7 @@ export const VisitaPage = () => {
             <IonHeader className="ion-no-border">
                 <IonToolbar>
                     <IonButtons slot="start">
-                        <IonBackButton defaultHref='/visitas'></IonBackButton>
+                        <IonBackButton type='button' defaultHref='/visitas'></IonBackButton>
                     </IonButtons>
                     <IonTitle> Visita </IonTitle>
                 </IonToolbar>
@@ -57,7 +57,7 @@ export const VisitaPage = () => {
             </IonContent>
             <IonFooter>
                 <IonToolbar className='ion-padding-horizontal'>
-                    <IonButton expand='block' onClick={() => dataToScan()} > 
+                    <IonButton type='button' expand='block' onClick={() => dataToScan()} > 
                         <IonIcon icon={qrCodeOutline} slot='start' />
                         Scan 
                     </IonButton>
