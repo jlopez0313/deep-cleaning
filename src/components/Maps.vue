@@ -9,7 +9,7 @@ import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
 
 const emit = defineEmits()
 const props = defineProps({
-    markers: [],
+    markers: Array,
 })
 
 const map = ref( null );
@@ -17,9 +17,12 @@ const map = ref( null );
 const loadMap = () => {
     map.value = L.map("mapContainer").setView([36.05, -92.05], 5);
 
-    L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-    attribution:'',
-    }).addTo(map.value);
+    L.tileLayer(
+        "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 
+        {
+            attribution:'',
+        }
+    ).addTo(map.value);
 
     //use a mix of renderers
     const customPane = map.value.createPane("customPane");

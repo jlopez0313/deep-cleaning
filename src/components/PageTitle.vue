@@ -27,9 +27,9 @@
 
 <script setup>
 const props = defineProps({
-    title: 'Box',
-    link: '',
-    breadcrumb: []
+    title: String,
+    link: String,
+    breadcrumb: Array
 })
 
 </script>

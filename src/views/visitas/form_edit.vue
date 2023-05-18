@@ -10,17 +10,15 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mt-3">
-                                <label class="form-label"> Tipo de Programación </label>
-                                <select class="form-control" v-model="form.tipo" required
-                                    :class="{'border-danger': v$.tipo.$error}" 
+                                <label class="form-label"> Fecha de Visita </label>
+                                <input class="form-control" type="date" v-model="form.fecha" required
+                                    :class="{'border-danger': v$.fecha.$error}"
+                                    :min="today"
                                 >
-                                    <option value="month"> Mensual </option>
-                                    <option value="date"> Eventual </option>
-                                </select>
-                                <div class="text-danger text-invalid" v-if="v$.tipo.$error">
-                                        {{ v$.tipo.$errors[0].$message }}
+                                <div class="text-danger text-invalid" v-if="v$.fecha.$error">
+                                        {{ v$.fecha.$errors[0].$message }}
                                 </div>
-                            </div>
+                            </div>                            
                             <div class="mt-3">
                                 <label class="form-label"> Local </label>
                                 <select class="form-control" v-model="form.local.id" required
@@ -48,16 +46,6 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mt-3">
-                                <label class="form-label"> Fecha de Visita </label>
-                                <input class="form-control" :type="form.tipo" v-model="form.fecha" required
-                                    :class="{'border-danger': v$.fecha.$error}" 
-                                    :min="today"
-                                >
-                                <div class="text-danger text-invalid" v-if="v$.fecha.$error">
-                                        {{ v$.fecha.$errors[0].$message }}
-                                </div>
-                            </div>
-                            <div class="mt-3">
                                 <label class="form-label"> Hora Inicial </label>
                                 <input class="form-control" type="time" v-model="form.start_time" required
                                     :class="{'border-danger': v$.start_time.$error}" 
@@ -73,6 +61,18 @@
                                 >
                                 <div class="text-danger text-invalid" v-if="v$.end_time.$error">
                                         {{ v$.end_time.$errors[0].$message }}
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label"> Estado </label>
+                                <select class="form-control" v-model="form.estados_id" required
+                                    :class="{'border-danger': v$.estados_id.$error}" 
+                                >
+                                    <option> - </option>
+                                    <option v-for="estado in estados" :value="estado.id"> {{  estado.estado }}</option>
+                                </select>
+                                <div class="text-danger text-invalid" v-if="v$.local.$error">
+                                        {{ v$.estados_id.$errors[0].$message }}
                                 </div>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                             <tr v-for="(item, index) in form.checkList" :key="index">
                                 <td> 
                                     <div>
-                                        <select class="form-control" v-model="item.id" required
+                                        <select class="form-control" v-model="item.categorias_id" required
                                             :class="{'border-danger': v$.checkList.$errors[0]?.$message[ index ][0] }" 
                                         >
                                             <option value=""> - </option>
@@ -151,6 +151,7 @@ import PageTitle from '@/components/PageTitle.vue';
 import {findVisita, newVisita, updateVisita}  from '@/services/visitas';
 import {getAllCategories}  from '@/services/categorias';
 import {getAllLocales}  from '@/services/locales';
+import {getEstados}  from '@/services/estados';
 import {allByRol}  from '@/services/usuarios';
 
 import { useVuelidate } from '@vuelidate/core'
@@ -170,7 +171,8 @@ const route  = useRoute();
 
 const isLoading = ref( false );
 const id = ref( route.params.id || null );
-const today = ref('');
+const today = ref( new Date().toISOString().split("T")[0] );
+const estados = ref([])
 const locales = ref([])
 const usuarios = ref([])
 const categorias = ref([])
@@ -189,7 +191,9 @@ const initialState = {
     end_time: '',
     latitud: '',
     longitud: '',
+    estados_id: '',
     checkList: [],
+    deletedServices: [],
 };
 
 const form = reactive({...initialState})
@@ -204,20 +208,22 @@ const rules = {
     fecha: { required },
     start_time: { required },
     end_time: { required },
+    estados_id: { required },    
     checkList: {
         $each: helpers.forEach({
-            id: { required, unique: unique( computed(() => form.checkList), 'id' ) }
+            categorias_id: { required, unique: unique( computed(() => form.checkList), 'categorias_id' ) }
         })
     }
 }
 const v$ = useVuelidate(rules, form, { $lazy: true, $autoDirty: true })
 
 const onAddCategory = () => {
-    form.checkList.push({  id: '' })
+    form.checkList.push({  id: '', categorias_id: '' })
 }
 
 const onRemoveCategory = (key) => {
-    form.checkList.splice(key, 1);
+    const service = form.checkList.splice(key, 1);
+    form.deletedServices.push( service[0].id )
 }
 
 const onSearch = async () => {
@@ -226,13 +232,18 @@ const onSearch = async () => {
         const { data } = await findVisita( id.value );
         form.id = id.value
         form.local = data.local
-        form.fecha = data.fecha
+        form.fecha = data.start_date.split(' ')[0]
+        form.start_time = data.start_date.split(' ')[1]
+        form.end_time = data.end_date.split(' ')[1]
         form.latitud = data.latitud
         form.longitud = data.longitud
         form.limpiador = data.attender
-        
-        data.checklist.forEach( category => {
-            form.checkList.push({id: category.id});
+        form.estados_id = data.estados_id
+        data.checklist.forEach( service => {
+            form.checkList.push({
+                id: service.id,
+                categorias_id: service.categorias_id
+            });
         })
 
     } catch (err){
@@ -275,21 +286,52 @@ const doSubmit = async (evt) => {
     }
 }
 
-const getAll = () => {
-    const p1 = allByRol([ 4 ]);
-    const p2 = getAllLocales();
-    const p3 = getAllCategories();
-
-    Promise.all([p1, p2, p3])
-    .then( values => {
-        usuarios.value = values[0].data;
-        locales.value = values[1].data;
-        categorias.value = values[2].data;
-    }).catch( err => {
+const getUsers = async() => {
+    try {
+        isLoading.value = true;
+        const { data } = await allByRol([ 4 ]);
+        usuarios.value = data;
+    } catch (err){
         Alerts.error( err.message );
-    }).finally( () => {
+    } finally {
         isLoading.value = false;
-    });
+    }
+}
+
+const getLocales = async() => {
+    try {
+        isLoading.value = true;
+        const { data } = await getAllLocales();
+        locales.value = data;
+    } catch (err){
+        Alerts.error( err.message );
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+const allCategories = async( ) => {
+    try {
+        isLoading.value = true;
+        const { data } = await getAllCategories();
+        categorias.value = data;
+    } catch (err){
+        Alerts.error( err.message );
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+const allEstados = async( ) => {    
+    try {
+        isLoading.value = true;
+        const { data } = await getEstados();
+        estados.value = data;
+    } catch (err){
+        Alerts.error( err.message );
+    } finally {
+        isLoading.value = false;
+    }
 }
 
 watch(
@@ -304,23 +346,11 @@ watch(
     }
 )
 
-watch( () => form.tipo,
-    async newVal => {
-        console.log( newVal );
-        if ( newVal == 'date') {
-            today.value = new Date().toISOString().split("T")[0];
-        } else  if ( newVal == 'month') {
-            const date =  new Date();
-            today.value = `${date.getFullYear()}-${ (date.getMonth() + 1).toString().padStart(2, 0) }`
-        }
-    }
-)
-
 onBeforeMount( () => {
-    const date =  new Date();
-    today.value = `${date.getFullYear()}-${ (date.getMonth() + 1).toString().padStart(2, 0) }`
-
-    getAll();
+    getUsers();
+    getLocales();
+    allEstados();
+    allCategories();
 })
 
 </script>

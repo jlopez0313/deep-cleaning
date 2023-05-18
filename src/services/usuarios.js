@@ -2,12 +2,12 @@ import {baseApi} from './api';
 
 const module = '/users'
 
-export const getUsuarios = async( params ) => {
-    const queryParams = new URLSearchParams(params).toString();
-    
-    return await baseApi.get( module + '?' + queryParams )
+export const allUsers = async() => {
+    return await baseApi.get( module + '/all' )
     .catch((error) => {
-        if (error.response) {
+        if( error.response.status == 401 ) {
+            throw new Error(error.response.data.message)            
+        } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
             throw new Error(error.request)
@@ -17,10 +17,29 @@ export const getUsuarios = async( params ) => {
     })
 }
 
-export const allByRol = async( rol ) => {
-    return await baseApi.get(module + '/byRol/' + rol)
+export const getUsuarios = async( params ) => {
+    const queryParams = new URLSearchParams(params).toString();
+    
+    return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
-        if (error.response) {
+        if( error.response.status == 401 ) {
+            throw new Error(error.response.data.message)            
+        } else if (error.response) {
+            throw new Error(error.response.data.message)
+        } else if (error.request) {
+            throw new Error(error.request)
+        } else {
+            throw new Error(error.message)
+        }
+    })
+}
+
+export const allByRol = async( roles ) => {
+    return await baseApi.post(module + '/byRol', {roles: roles} )
+    .catch((error) => {
+        if( error.response.status == 401 ) {
+            throw new Error(error.response.data.message)            
+        } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
             throw new Error(error.request)
@@ -33,7 +52,9 @@ export const allByRol = async( rol ) => {
 export const findUser = async( id ) => {
     return await baseApi.get(module + '/' + id)
     .catch((error) => {
-        if (error.response) {
+        if( error.response.status == 401 ) {
+            throw new Error(error.response.data.message)            
+        } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
             throw new Error(error.request)
@@ -46,7 +67,9 @@ export const findUser = async( id ) => {
 export const newUser = async( formData ) => {
     return await baseApi.post(module, formData)
     .catch((error) => {
-        if (error.response) {
+        if( error.response.status == 401 ) {
+            throw new Error(error.response.data.message)            
+        } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
             throw new Error(error.request)
@@ -59,7 +82,24 @@ export const newUser = async( formData ) => {
 export const updateUser = async( formData ) => {
     return await baseApi.put(module + '/' + formData.id, formData)
     .catch((error) => {
-        if (error.response) {
+        if( error.response.status == 401 ) {
+            throw new Error('error.response.data.message')
+        } else if (error.response) {
+            throw new Error(error.response.data.message)
+        } else if (error.request) {
+            throw new Error(error.request)
+        } else {
+            throw new Error(error.message)
+        }
+    })
+}
+
+export const removeUser = async( id ) => {
+    return await baseApi.delete(module + '/' + id)
+    .catch((error) => {
+        if( error.response.status == 401 ) {
+            throw new Error('error.response.data.message')
+        } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
             throw new Error(error.request)

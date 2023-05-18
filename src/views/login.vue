@@ -57,7 +57,7 @@
             </div>
             <div class="mt-5 text-center">
                 <p>©
-                    {{ date }} Qovex. 
+                    {{ date }}. 
                 </p>
             </div>
 
@@ -66,9 +66,11 @@
 </template>
 
 <script setup>
-import Alerts from '@/composables/alerts';
-import { useRoute, useRouter } from 'vue-router'
 import { ref, watch, reactive, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import Alerts from '@/composables/alerts';
+
 import {login}  from '@/services/auth';
 import {setUser} from '@/helpers/onboarding'
 

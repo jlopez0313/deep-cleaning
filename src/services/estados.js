@@ -1,7 +1,9 @@
 import {baseApi} from './api';
 
-export const login = async( formData ) => {
-    return await baseApi.post('/login', formData)
+const module = '/estados'
+
+export const getEstados = async() => {
+    return await baseApi.get(module + '/all')
     .catch((error) => {
         if( error.response.status == 401 ) {
             throw new Error('error.response.data.message')

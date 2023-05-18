@@ -31,6 +31,16 @@ const Alerts = {
   error: (message: string) => {
     Swal.fire('Aviso!', message, 'error')
   },
+  confirm: (title: string, message: string) => {
+    return Swal.fire({
+      title: title,
+      text: message,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No',
+    })
+  }
 }
 
 export default Alerts

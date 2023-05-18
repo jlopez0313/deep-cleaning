@@ -20,7 +20,11 @@
                             <div>
                                 <label class="form-label"> Limpiador </label>
                                 <span class="form-control"> {{ form.limpiador.name }} </span>
-                            </div>                        
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label"> Fecha de Finalización </label>
+                                <span class="form-control"> {{ form.finished_at || '-' }} </span>
+                            </div>                    
                         </div>
                         <div class="col-lg-12">
                             <div class="mt-3">
@@ -43,15 +47,13 @@
                         <thead>
                             <tr>
                                 <th>Checklist</th>
-                                <th>Acciones</th>
+                                <th>Finalizada</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in form.checkList" :key="index">
-                                <td> {{ item.categoria }}</td>
-                                <td> 
-                                    <router-link :to="`locales/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm"> <i class="mdi mdi-delete-outline"></i> </router-link>
-                                </td>
+                                <td> {{ item.categoria.categoria }} </td>
+                                <td> {{ item.done ? 'Si' : 'No' }} </td>
                             </tr>
                         </tbody>
                     </table>                    
@@ -66,11 +68,13 @@
 </template>
 
 <script setup>
+import { ref, watch, reactive, onBeforeMount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import Alerts from '@/composables/alerts';
 import Maps from '@/components/Maps.vue';
-import { useRoute, useRouter } from 'vue-router'
-import { ref, watch, reactive, onBeforeMount } from 'vue'
 import PageTitle from '@/components/PageTitle.vue';
+
 import {findVisita, newVisita, updateVisita}  from '@/services/visitas';
 
 const title = 'Detalle de Visitas'
@@ -96,6 +100,7 @@ const initialState = {
         id: ''
     },
     fecha: '',
+    finished_at: '',
     latitud: '',
     longitud: '',
     checkList: [],
@@ -110,6 +115,7 @@ const onSearch = async () => {
         form.id = id.value
         form.local = data.local
         form.fecha = data.fecha
+        form.finished_at = data.finished_at
         form.latitud = data.latitud
         form.longitud = data.longitud    
         form.limpiador = data.attender

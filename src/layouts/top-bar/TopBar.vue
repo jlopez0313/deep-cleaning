@@ -162,15 +162,12 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, watch } from 'vue'
 import {getUser} from '@/helpers/onboarding'
 
 const user = ref(null);
 const isShown = ref(false);
 
-onBeforeMount(() => {
-    user.value = getUser();
-})
 
 const toggleShown = () => {
     isShown.value = !isShown.value
@@ -184,6 +181,9 @@ const toggleMenu = () => {
     }
 }
 
+onBeforeMount(() => {
+    user.value = getUser();
+})
 </script>
 
 <style scoped>

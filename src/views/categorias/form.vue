@@ -8,7 +8,7 @@
             >
                 <div class="row">
                     <div class="col-lg-12">
-                        <div>                            
+                        <div class="mt-3">                            
                             <label class="form-label"> Servicio </label>
                             <input class="form-control" v-model="form.categoria" required
                                 :class="{'border-danger': v$.categoria.$error}" 
@@ -34,16 +34,18 @@
 </template>
 
 <script setup>
-import Alerts from '@/composables/alerts';
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch, reactive } from 'vue'
-import PageTitle from '@/components/PageTitle.vue';
-import {findCategoria, newCategoria, updateCategoria}  from '@/services/categorias';
-
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 
-const title = 'Form de Servicios'
+import Alerts from '@/composables/alerts';
+import PageTitle from '@/components/PageTitle.vue';
+
+import {findCategoria, newCategoria, updateCategoria}  from '@/services/categorias';
+
+
+const title = 'Servicios'
 
 const breadcrumb = [
     {title: 'Servicios', active: false, link: '/categorias'},
@@ -72,7 +74,8 @@ const onSearch = async () => {
         isLoading.value = true;
         const { data } = await findCategoria( id.value );
         form.id = id.value
-        form.categoria = data.categoria
+        form.categoria = data.categoria;
+
     } catch (err){
         Alerts.error( err.message );
     } finally {
@@ -95,11 +98,17 @@ const doSubmit = async (evt) => {
     
     try {
         isLoading.value = true;
+        
         if ( id.value ) {
             await updateCategoria( form );
+            Alerts.update();
         } else {
             await newCategoria( form );
+            Alerts.create();
         }
+
+        router.push('/categorias')
+
     } catch (err){
         Alerts.error( err.message );
     } finally {

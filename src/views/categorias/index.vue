@@ -10,6 +10,7 @@
                 :acciones="acciones"
                 :serverItemsLength="serverItemsLength"
                 @dataChange="loadFromServer($event)"
+                @delete="doRemove($event)"
             ></Datatable>
 
             <div class="mt-3" v-if="isLoading">
@@ -24,12 +25,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 import Alerts from '@/composables/alerts';
 import Datatable from '@/components/Datatable.vue';
-import Fab from '@/components/Fab.vue';
 import PageTitle from '@/components/PageTitle.vue';
-import { ref } from 'vue';
-import {getCategorias}  from '@/services/categorias';
+import Fab from '@/components/Fab.vue';
+
+import {getCategorias, removeCategoria}  from '@/services/categorias';
 
 const title = 'Servicios'
 const breadcrumb = [
@@ -56,6 +59,18 @@ const loadFromServer = async( serverOptions ) => {
     } finally {
         isLoading.value = false;
     }
+}
+
+const doRemove = ( {serverOptions, id}) => {
+    Alerts.confirm('Validación', 'Deseas eliminar este registro?')
+    .then( async ( {isConfirmed} ) => {
+        if( isConfirmed) {
+            isLoading.value = true;
+            items.value = [];
+            await removeCategoria(id);
+            loadFromServer(serverOptions)
+        }
+    })
 }
 </script>
 

@@ -9,7 +9,7 @@
                 <h4 class="card-title"> Datos del Local </h4>
                 <div class="row">
                     <div class="col-lg-6">
-                        <div>
+                        <div class="mt-3">
                             <label class="form-label"> Nombre </label>
                             <input class="form-control" v-model="form.local" required
                                 :class="{'border-danger': v$.local.$error}" 
@@ -29,13 +29,12 @@
                         </div>                   
                     </div>
                     <div class="col-lg-6">
-                        <div>
+                        <div class="mt-3">
                             <label class="form-label"> Foto del Local </label>
                             <input class="form-control" type="file" accept="image/*"
                                 @change="onFileChange"
                             >
                         </div>
-                        
                         <div class="mt-3">
                             <img class="foto" v-if="foto" :src="foto" />
                         </div>
@@ -74,11 +73,18 @@
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in form.usuarios" :key="index">
-                                <td> 
-                                    <select class="form-control" required>
-                                        <option> - </option>
-                                        <option v-for="user in usuarios" :value="user.id"> {{  user.name }}</option>
-                                    </select>
+                                <td>
+                                    <div>
+                                        <select class="form-control" v-model="item.id" required
+                                            :class="{'border-danger': v$.usuarios.$errors[0]?.$message[ index ][0] }" 
+                                        >
+                                            <option value=""> - </option>
+                                            <option v-for="user in usuarios" :value="user.id"> {{  user.name }}</option>
+                                        </select>
+                                        <div class="text-danger text-invalid" v-if="v$.usuarios.$errors[0]?.$message[ index ][0]">
+                                                {{ v$.usuarios.$errors[0].$message[ index ][0] }}
+                                        </div>
+                                    </div>
                                 </td>
                                 <td> 
                                     <button class="btn btn-outline-secondary btn-sm" type="button" @click="onRemoveUser( index )"> <i class="mdi mdi-delete-outline"></i> </button>
@@ -113,19 +119,21 @@
 </template>
 
 <script setup>
-import Alerts from '@/composables/alerts';
-import Images from '@/composables/images';
-import Maps from '@/components/Maps.vue';
+import { ref, watch, computed, reactive, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, watch, reactive,onBeforeMount } from 'vue'
+
+import Alerts from '@/composables/alerts';
 import PageTitle from '@/components/PageTitle.vue';
+import Maps from '@/components/Maps.vue';
+
 import {findLocal, newLocal, updateLocal}  from '@/services/locales';
 import {allByRol}  from '@/services/usuarios';
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
+import { unique } from '@/helpers/validators';
 
-const title = 'Form de Locales'
+const title = 'Locales'
 
 const breadcrumb = [
     {title: 'Locales', active: false, link: '/locales'},
@@ -158,12 +166,10 @@ const initialState = {
     longitud: '',
     foto: '',
     oldPhoto: '',
-    usuarios: [
-        { id: '' }
-    ]
+    usuarios: []
 };
 
-const form = reactive({...initialState, usuarios: []})
+const form = reactive({...initialState})
 const rules = {
     local: { required },
     direccion: { required },
@@ -172,7 +178,7 @@ const rules = {
     // foto: { required },
     usuarios: {
         $each: helpers.forEach({
-            id: { required }
+            id: { required, unique: unique( computed(() => form.usuarios), 'id' ) }
         })
     }
 }
@@ -195,7 +201,10 @@ const onSearch = async() => {
         form.direccion = data.direccion
         form.latitud = data.latitud
         form.longitud = data.longitud
-        form.usuarios = data.managers;
+
+        data.usuarios.forEach( user => {
+            form.usuarios.push({id: user.user_id});
+        })
         
         if (data.foto)  {
             foto.value = `${import.meta.env.VITE_BASE_BACK}/${data.foto}`;
@@ -225,7 +234,7 @@ const onLatLng = (latLng) => {
 const getUsers = async() => {
     try {
         isLoading.value = true;
-        const { data } = await allByRol( 4 );
+        const { data } = await allByRol([ 2, 5 ]);
         usuarios.value = data;
     } catch (err){
         Alerts.error( err.message );
@@ -239,10 +248,18 @@ const onFileChange = (e) => {
     foto.value = URL.createObjectURL(form.foto);
 }
 
+const checkUnique = ( evt, key ) => {
+    const found = form.usuarios.filter(item => item['id'] == evt.target.value)
+    if ( found.length > 1 ) {
+        
+    }
+}
+
 const doSubmit = async (evt) => {
     evt.preventDefault();
-    
+
     const valid = await v$.value.$validate()
+
     if ( !valid ) {
         return;
     }
@@ -251,9 +268,13 @@ const doSubmit = async (evt) => {
         isLoading.value = true;
         if ( id.value ) {
             await updateLocal( form );
+            Alerts.update();
         } else {
             await newLocal( form );
+            Alerts.create();
         }
+
+        router.push('/locales')
     } catch (err){
         Alerts.error( err.message );
     } finally {

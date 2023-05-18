@@ -15,9 +15,9 @@
             <router-link v-if="acciones.includes('editar')" :to="`/${modulo}/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm ms-4">
                 <i class="mdi mdi-pencil-outline"></i>
             </router-link>
-            <router-link v-if="acciones.includes('eliminar')" :to="`/${modulo}/${item.id}`" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4">
+            <button v-if="acciones.includes('eliminar')" @click="emit('delete', {serverOptions, id: item.id})" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4">
                 <i class="mdi mdi-delete-outline"></i>
-            </router-link>
+            </button>
         </template>
     </EasyDataTable>
 </template>
@@ -29,11 +29,11 @@ const loading = ref(false);
 const emit = defineEmits()
 
 const props = defineProps({
-    modulo: '',
-    acciones: [],
-    headers: [],
-    items: [],
-    serverItemsLength: 0
+    modulo: String,
+    acciones: Array,
+    headers: Array,
+    items: Array,
+    serverItemsLength: Number
 })
 
 const serverOptions = ref({
