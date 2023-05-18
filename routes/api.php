@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
     Route::prefix('users')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\UserController', 'all']);
         Route::post('byRol', ['App\Http\Controllers\api\v1\UserController', 'byRol']);
+        Route::post('{id}', ['App\Http\Controllers\api\v1\UserController', 'update']);
     });
     Route::apiResource('users', 'App\Http\Controllers\api\v1\UserController');
 

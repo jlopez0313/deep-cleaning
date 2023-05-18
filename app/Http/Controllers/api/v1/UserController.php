@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRequest;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -39,8 +40,6 @@ class UserController extends Controller
     {
         $this->validateRequest($request);
 
-        $hasUser = 
-
         $user = \App\Models\User::create([
             'parent_id' => $request->parent_id,
             'roles_id' => $request->roles_id,
@@ -67,14 +66,24 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage. Request is sent by FORM ENCODE
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $this->validateRequest($request);
+        $path = null;
+        if ( $request->foto ) {
+            $file = $request->foto;
+            $path = $file->store('usuarios');
+            $user->foto = $path;
+
+            if ( $request->oldPhoto ) {
+                \Storage::delete($request->oldPhoto);
+            }
+        }
         
         $user->parent_id = $request->parent_id;
         $user->roles_id = $request->roles_id;
         $user->name     = $request->name;
         $user->email    = $request->email;
+
 
         if ( $request->password ) {
             $user->password = Hash::make( $request->password );
