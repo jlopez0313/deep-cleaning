@@ -9,25 +9,6 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="mt-3">
-                            <label class="form-label"> Rol </label>
-                            <select class="form-control" v-model="form.roles_id" required
-                                :class="{'border-danger': v$.roles_id.$error}" 
-                            >
-                                <option value=""> - </option>
-                                <option v-for="rol in roles" :value="rol.id"> {{  rol.rol }}</option>
-                            </select>
-                            <div class="text-danger text-invalid" v-if="v$.roles_id.$error">
-                                    {{ v$.roles_id.$errors[0].$message }}
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="form-label"> Líder </label>
-                            <select class="form-control" v-model="form.parent_id">
-                                <option value=""> - </option>
-                                <option v-for="user in usuarios" :value="user.id"> {{  user.name }}</option>
-                            </select>
-                        </div>
-                        <div class="mt-3">
                             <label class="form-label"> Nombre </label>
                             <input class="form-control" v-model="form.name" required
                                 :class="{'border-danger': v$.name.$error}" 
@@ -35,9 +16,7 @@
                             <div class="text-danger text-invalid" v-if="v$.name.$error">
                                     {{ v$.name.$errors[0].$message }}
                             </div>
-                        </div>             
-                    </div>
-                    <div class="col-lg-6">
+                        </div>
                         <div class="mt-3">
                             <label class="form-label"> Email </label>
                             <input class="form-control" v-model="form.email" required
@@ -46,7 +25,18 @@
                             <div class="text-danger text-invalid" v-if="v$.email.$error">
                                     {{ v$.email.$errors[0].$message }}
                             </div>
-                        </div>  
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label"> Foto de Perfil </label>
+                            <input class="form-control" type="file" accept="image/*"
+                                @change="onFileChange"
+                            >
+                        </div>
+                        <div class="mt-3">
+                            <img class="foto" v-if="foto" :src="foto" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="mt-3">
                             <label class="form-label"> Password </label>
                             <input class="form-control" type='password' v-model="form.password" :required="!id"
@@ -102,29 +92,26 @@ import {getUser, setUser} from '@/helpers/onboarding'
 import { useStore } from 'vuex'
 const store = useStore()
 
-const title = 'Usuarios'
+const title = 'Mi Pefil'
 const breadcrumb = [
-    {title: 'Usuarios', active: false, link: '/usuarios'},
     {title: title, active: true}
 ]
 
 const router = useRouter();
-const route  = useRoute();
 
 const user = getUser();
-const roles = ref([])
-const usuarios = ref([])
+const foto = ref('');
 const isLoading = ref( false );
-const id = ref( route.params.id || null );
 
 const initialState = {
     id: '',
     roles_id: '',
-    parent_id: '',
     name: '',
     email: '',
     password: '',
     password2: '',
+    foto: '',
+    oldPhoto: '',
 };
 
 const form = reactive({...initialState})
@@ -133,36 +120,35 @@ const rules = {
     name: { required },
     email: { required, email },
     password: { 
-        required: requiredIf(!id.value)
     },
     password2: { 
-        required: requiredIf(!id.value),
+        required: requiredIf(form.password),
         sameAs: sameAs(computed(()=> form.password), "Password"),
     },
 }
 const v$ = useVuelidate(rules, form, { $lazy: true, $autoDirty: true })
 
-
 const onSearch = async() => {
     try {
         isLoading.value = true;
-        const { data } = await findUser( id.value );
-        form.parent_id = data.parent_id || null;
-        form.id = id.value
+        const { data } = await findUser( user.user.id );
+        form.id = user.user.id
         form.roles_id = data.roles_id;
         form.name = data.name
         form.email = data.email
         form.password = data.password
         form.password2 = data.password
+
+        if (data.foto)  {
+            foto.value = `${import.meta.env.VITE_BASE_BACK}/${data.foto}`;
+            form.oldPhoto = data.foto;
+        }
+
     } catch (err){
         Alerts.error( err.message );
     } finally {
         isLoading.value = false;
     }
-}
-
-if( id.value ) {
-    onSearch()
 }
 
 const doSubmit = async (evt) => {
@@ -175,20 +161,11 @@ const doSubmit = async (evt) => {
     
     try {
         isLoading.value = true;
-        if ( id.value ) {
-            const updated = await updateUser( form );
-            Alerts.update();
-            if ( user.user.id == id.value ) {
-                user.user = updated.data
-                setUser( user )
-                store.commit('user/setUser', user)
-            }
-        } else {
-            await newUser( form );
-            Alerts.create();
-        }
-
-        router.push('/usuarios')
+        const updated = await updateUser( form );
+        Alerts.update();
+        user.user = updated.data
+        setUser( user )
+        store.commit('user/setUser', user)
     } catch (err){
         Alerts.error( err.message );
     } finally {
@@ -196,38 +173,20 @@ const doSubmit = async (evt) => {
     }
 }
 
-const getAll = () => {
-    const p1 = getRoles();
-    const p2 = allUsers();
-
-    Promise.all([p1, p2])
-    .then( values => {
-        roles.value = values[0].data;
-        usuarios.value = values[1].data;
-    }).catch( err => {
-        Alerts.error( err.message );
-    }).finally( () => {
-        isLoading.value = false;
-    });
+const onFileChange = (e) => {
+    form.foto = e.target.files[0];
+    foto.value = URL.createObjectURL(form.foto);
 }
 
-watch(
-    () => route.params.id,
-    async newId => {
-        id.value = newId
-        if ( newId ) {
-            onSearch()
-        } else {
-            Object.assign(form, {...initialState})
-        }
-    }
-)
 
 onBeforeMount( () => {
-    getAll();
+    onSearch();
 }) 
 
 </script>
 <style>
-    
+.foto {
+    max-height: 200px;
+    max-width: 200px;
+}
 </style>

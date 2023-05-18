@@ -4,14 +4,14 @@
 
             <div class="user-wid text-center py-4">
                 <div class="user-img">
-                    <img src="/assets/images/users/avatar-2.jpg" alt="" class="avatar-md mx-auto rounded-circle">
+                    <router-link class="dropdown-item" to="/perfil" @click="isShown=false">
+                        <img :src="foto" alt="" class="avatar-md mx-auto rounded-circle">
+                    </router-link>
                 </div>
 
                 <div class="mt-3">
-
-                    <a href="#" class="text-reset fw-medium font-size-16">{{ user.user.name }} </a>
-                    <p class="text-muted mt-1 mb-0 font-size-13">{{ user.user.rol.rol }}</p>
-
+                    <a href="#" class="text-reset fw-medium font-size-16">{{ user?.user?.name }} </a>
+                    <p class="text-muted mt-1 mb-0 font-size-13">{{ user?.user?.rol.rol }}</p>
                 </div>
             </div>
 
@@ -55,14 +55,19 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 
-import { ref, onBeforeMount } from 'vue'
-import {getUser} from '@/helpers/onboarding'
+import { useStore } from 'vuex'
+const store = useStore()
 
-const user = ref(null);
+const user = computed( () => {
+    return store.state.user.user
+});
 
-onBeforeMount(() => {
-    user.value = getUser();
+const foto = computed( () => {
+    return user.value.user?.foto ? 
+        `${import.meta.env.VITE_BASE_BACK}/${user.value.user.foto}` 
+        : '/assets/images/users/avatar-2.jpg'
 })
 
 const hideMenu = () => {

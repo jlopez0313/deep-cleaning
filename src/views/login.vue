@@ -66,16 +66,19 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive, computed } from 'vue'
+import { ref, watch, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import Alerts from '@/composables/alerts';
 
 import {login}  from '@/services/auth';
-import {setUser} from '@/helpers/onboarding'
+import {setUser, clearUser} from '@/helpers/onboarding'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, email as isEmail } from '@vuelidate/validators'
+
+import { useStore } from 'vuex'
+const store = useStore()
 
 const date = ref( new Date().getFullYear() );
 const isLoading = ref( false );
@@ -106,12 +109,18 @@ const doSubmit = async ( evt ) => {
         isLoading.value = true;
         const {data} = await login( form );
         setUser( data )
+        store.commit('user/setUser', data)
         router.push('/')
     } catch (err){
         Alerts.error( err.message );
         isLoading.value = false;
     }
 }
+
+onMounted(() => {
+    clearUser()
+    store.commit('user/setUser', {})
+})
 
 </script>
 <style>

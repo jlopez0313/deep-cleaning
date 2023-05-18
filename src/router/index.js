@@ -13,6 +13,15 @@ const routes = [
     },{
         path: '/login',
         component: () => import('@/views/login.vue'),
+    },{
+        path: '/perfil',
+        component: () => import('@/layouts/Layout.vue'),
+        children: [
+            {
+                path: '',
+                component: () => import('@/views/perfil/perfil.vue'),
+            }
+        ]
     },
     {
         path: '/usuarios',

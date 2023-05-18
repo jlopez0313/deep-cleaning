@@ -9,7 +9,7 @@
                             id="page-header-notifications-dropdown"  aria-haspopup="true"
                             aria-expanded="false">
                             <i class="mdi mdi-bell-outline"></i>
-                            <span class="badge rounded-pill bg-danger ">3</span>
+                            <span class="badge rounded-pill bg-danger "> 0 </span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                             aria-labelledby="page-header-notifications-dropdown">
@@ -98,9 +98,9 @@
                             @click="toggleShown()"
 
                         >
-                            <img class="rounded-circle header-profile-user" src="/assets/images/users/avatar-2.jpg"
+                            <img class="rounded-circle header-profile-user" :src="foto"
                                 alt="Header Avatar">
-                            <span class="d-none d-xl-inline-block ms-1">{{ user.user.name }}</span>
+                            <span class="d-none d-xl-inline-block ms-1">{{ user?.user?.name }}</span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
                         <div 
@@ -113,12 +113,14 @@
                                 transform: translate(-100px, 72px);"
                             >
                             <!-- item-->
-                            <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i>
-                                Profile</a>
+                            <router-link class="dropdown-item" to="/perfil" @click="isShown=false">
+                                <i class="bx bx-user font-size-16 align-middle me-1"></i>
+                                Pefil
+                            </router-link>
                             <div class="dropdown-divider"></div>
                             <router-link class="dropdown-item text-danger" to="/login">
                                 <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> 
-                                Logout
+                                Salir
                             </router-link>
                         </div>
                     </div>
@@ -162,10 +164,21 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch } from 'vue'
-import {getUser} from '@/helpers/onboarding'
+import { ref, computed } from 'vue'
 
-const user = ref(null);
+import { useStore } from 'vuex'
+const store = useStore()
+
+const user = computed( () => {
+    return store.state.user.user
+});
+
+const foto = computed( () => {
+    return user.value.user?.foto ? 
+        `${import.meta.env.VITE_BASE_BACK}/${user.value.user.foto}` 
+        : '/assets/images/users/avatar-2.jpg'
+})
+
 const isShown = ref(false);
 
 
@@ -181,9 +194,6 @@ const toggleMenu = () => {
     }
 }
 
-onBeforeMount(() => {
-    user.value = getUser();
-})
 </script>
 
 <style scoped>
