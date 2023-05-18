@@ -26,9 +26,8 @@ return new class extends Migration
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('cascade');
 
-            $table->date('fecha')->required();
-            $table->time('start_time')->required();
-            $table->time('end_time')->required();
+            $table->timestamp('start_date')->required();
+            $table->timestamp('end_date')->required();
             $table->string('latitud')->nullable();
             $table->string('longitud')->nullable();
             $table->timestamp('started_at')->nullable();

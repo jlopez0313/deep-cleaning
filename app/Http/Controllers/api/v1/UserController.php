@@ -13,7 +13,7 @@ class UserController extends Controller
     public function validateRequest(Request $request)
     {
         return $request->validate([
-            'parent_id' => Rule::notIn([$request->id]),
+            'parent_id' => 'sometimes|nullable|'.Rule::notIn([$request->id]),
             'roles_id' => 'required',
             'name' => 'required',
             'email' => 'required|email|'.Rule::unique(User::class)->ignore($request->id),
@@ -98,6 +98,7 @@ class UserController extends Controller
 
     public function byRol(Request $request)
     {
+        // return $request->all();
         return \App\Models\User::with('rol')->whereIn('roles_id', $request->roles)->orderBy('name')->get();
     }
 

@@ -42,7 +42,7 @@ class VisitasController extends Controller
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
                 ->where('attended_by', $id)
-                ->orderBy('fecha', 'desc')
+                ->orderBy('start_date', 'desc')
                 ->paginate( $request->rowsPerPage );
     }
 
@@ -111,11 +111,10 @@ class VisitasController extends Controller
     {
         $this->validateRequest($request);
 
-        $visita->fecha          = $request->fecha;
         $visita->locales_id     = $request->local['id'];
         $visita->attended_by    = $request->limpiador['id'];
-        $visita->start_time     = $request->start_time;
-        $visita->end_time       = $request->end_time;
+        $visita->start_date     = \Carbon\Carbon::parse($request->fecha . ' ' . $request->start_time);
+        $visita->end_date       = \Carbon\Carbon::parse($request->fecha . ' ' . $request->end_time);
         $visita->estados_id     = $request->estados_id;
         $visita->save();
 
