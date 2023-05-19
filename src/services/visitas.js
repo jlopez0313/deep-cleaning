@@ -1,5 +1,6 @@
-import {baseApi} from './api';
+import router from '@/router'
 
+import {baseApi} from './api';
 const module = '/visitas'
 
 export const getVisitas = async( formData, params ) => {
@@ -8,7 +9,8 @@ export const getVisitas = async( formData, params ) => {
     return await baseApi.get( module + '/' + formData.usuarios_id + '?' + queryParams )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login')
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -24,7 +26,8 @@ export const findVisita = async( id ) => {
     return await baseApi.get(module + '/show/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')    
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -39,7 +42,8 @@ export const newVisita = async( formData ) => {
     return await baseApi.post(module, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -54,7 +58,8 @@ export const updateVisita = async( formData ) => {
     return await baseApi.put(module + '/' + formData.id, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -69,7 +74,8 @@ export const removeVisita = async( id ) => {
     return await baseApi.delete(module + '/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {

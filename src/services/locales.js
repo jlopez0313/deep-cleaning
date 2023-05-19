@@ -1,12 +1,14 @@
-import {baseApi} from './api';
+import router from '@/router'
 
+import {baseApi} from './api';
 const module = '/locales'
 
 export const getAllLocales = async() => {
     return await baseApi.get( module + '/all' )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');                        
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -23,7 +25,8 @@ export const getLocales = async(params) => {
     return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');                        
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -38,7 +41,8 @@ export const findLocal = async( id ) => {
     return await baseApi.get(module + '/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');                        
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -61,7 +65,8 @@ export const newLocal = async( data ) => {
     return await baseApi.post(module, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');                        
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -85,7 +90,8 @@ export const updateLocal = async( data ) => {
     return await baseApi.post(module + '/' + data.id, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');            
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -100,7 +106,8 @@ export const removeLocal = async( id ) => {
     return await baseApi.delete(module + '/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');            
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {

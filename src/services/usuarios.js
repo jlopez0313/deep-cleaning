@@ -1,12 +1,14 @@
-import {baseApi} from './api';
+import router from '@/router'
 
+import {baseApi} from './api';
 const module = '/users'
 
 export const allUsers = async() => {
     return await baseApi.get( module + '/all' )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error(error.response.data.message)            
+            router.push('/login');
+            throw new Error('No autenticado.')          
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -23,7 +25,8 @@ export const getUsuarios = async( params ) => {
     return await baseApi.get( module + '?' + queryParams )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error(error.response.data.message)            
+            router.push('/login');
+            throw new Error('No autenticado.')           
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -38,7 +41,8 @@ export const allByRol = async( roles ) => {
     return await baseApi.post(module + '/byRol', {roles: roles} )
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error(error.response.data.message)            
+            router.push('/login');
+            throw new Error('No autenticado.')           
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -53,7 +57,8 @@ export const findUser = async( id ) => {
     return await baseApi.get(module + '/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error(error.response.data.message)            
+            router.push('/login');
+            throw new Error('No autenticado.')          
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -68,7 +73,8 @@ export const newUser = async( formData ) => {
     return await baseApi.post(module, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error(error.response.data.message)            
+            router.push('/login');
+            throw new Error('No autenticado.')          
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -91,7 +97,8 @@ export const updateUser = async( data ) => {
     return await baseApi.post(module + '/' + data.id, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {
@@ -106,7 +113,8 @@ export const removeUser = async( id ) => {
     return await baseApi.delete(module + '/' + id)
     .catch((error) => {
         if( error.response.status == 401 ) {
-            throw new Error('error.response.data.message')
+            router.push('/login');
+            throw new Error('No autenticado.')
         } else if (error.response) {
             throw new Error(error.response.data.message)
         } else if (error.request) {

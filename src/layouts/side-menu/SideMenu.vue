@@ -65,7 +65,7 @@ const user = computed( () => {
 });
 
 const foto = computed( () => {
-    return user.value.user?.foto ? 
+    return user.value?.user?.foto ? 
         `${import.meta.env.VITE_BASE_BACK}/${user.value.user.foto}` 
         : '/assets/images/users/avatar-2.jpg'
 })
