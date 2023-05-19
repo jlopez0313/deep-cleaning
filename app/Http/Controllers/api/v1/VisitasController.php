@@ -186,7 +186,6 @@ class VisitasController extends Controller
             if ( $checklist->evidencia ) {
                 $file = $request->evidencia[$key];
                 $path = $file->store('evidencias');
-                $locale->foto = $path;
             }
 
             \App\Models\Checklist::find($checklist->id)
