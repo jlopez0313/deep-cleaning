@@ -174,7 +174,7 @@ class VisitasController extends Controller
 
     public function finalizar(VisitasRequest $request, Visitas $visita)
     {
-        $visita->estados_id = $request->estados_id;
+        $visita->estados_id = 2;
         $visita->started_at = $request->started_at;
         $visita->finished_at = $request->finished_at;
         $visita->save();
@@ -194,7 +194,6 @@ class VisitasController extends Controller
                 'done' => true,
                 'evidencia' => $path,
                 'updated_at' => \Carbon\Carbon::now(),
-                'estados_id' => 2
             ]);
         }
 
