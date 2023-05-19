@@ -184,7 +184,7 @@ class VisitasController extends Controller
             
             $path = '';
             if ( $checklist->evidencia ) {
-                $file = $request->foto;
+                $file = $checklist->evidencia;
                 $path = $file->store('evidencias');
                 $locale->foto = $path;
             }
