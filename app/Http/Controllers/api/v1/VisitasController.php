@@ -180,7 +180,7 @@ class VisitasController extends Controller
         $visita->save();
 
         $list = [];
-        foreach( $request->checklist as $checklist ) {
+        foreach( json_decode($request->checklist) as $checklist ) {
             
             $path = '';
             if ( $checklist->evidencia ) {
