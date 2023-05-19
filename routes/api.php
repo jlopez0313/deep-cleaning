@@ -64,7 +64,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
         Route::get('para-hoy/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'paraHoy']);
         Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
         Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
-        Route::put('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
+        Route::post('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
         Route::put('evaluar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'evaluar']);
     });
     Route::apiResource('visitas', 'App\Http\Controllers\api\v1\VisitasController');
