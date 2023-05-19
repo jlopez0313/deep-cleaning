@@ -136,8 +136,6 @@ const onSearch = async() => {
         form.roles_id = data.roles_id;
         form.name = data.name
         form.email = data.email
-        form.password = data.password
-        form.password2 = data.password
 
         if (data.foto)  {
             foto.value = `${import.meta.env.VITE_BASE_BACK}/${data.foto}`;

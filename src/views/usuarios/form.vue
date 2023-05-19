@@ -152,8 +152,6 @@ const onSearch = async() => {
         form.roles_id = data.roles_id;
         form.name = data.name
         form.email = data.email
-        form.password = data.password
-        form.password2 = data.password
     } catch (err){
         Alerts.error( err.message );
     } finally {
