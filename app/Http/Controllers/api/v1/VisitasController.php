@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Visitas;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\VisitasRequest;
 
 class VisitasController extends Controller
 {
@@ -171,24 +172,31 @@ class VisitasController extends Controller
         return $data;
     }
 
-    public function finalizar(Request $request, Visitas $visita)
+    public function finalizar(VisitasRequest $request, Visitas $visita)
     {
-        $this->validateFinalizar($request);
-
         $visita->estados_id = $request->estados_id;
-        $visita->finished_at = \Carbon\Carbon::now();
+        $visita->started_at = $request->started_at;
+        $visita->finished_at = $request->finished_at;
         $visita->save();
 
         $list = [];
         foreach( $request->checklist as $checklist ) {
-            $list[] = [
-                'id' => $checklist->id,
-                'done' => $checklist->done,
-                'evidencia' => $checklist->evidencia,
-            ];
-        }
+            
+            $path = '';
+            if ( $checklist->evidencia ) {
+                $file = $request->foto;
+                $path = $file->store('evidencias');
+                $locale->foto = $path;
+            }
 
-        \App\Models\Checklist::create( $list );
+            \App\Models\Checklist::find($checklist->id)
+            ->update([
+                'done' => true,
+                'evidencia' => $path,
+                'updated_at' => \Carbon\Carbon::now(),
+                'estados_id' => 2
+            ]);
+        }
 
         $data = $visita;
         $data->attender = $visita->attender;
@@ -235,6 +243,7 @@ class VisitasController extends Controller
                 ->where($field, $user->id)
                 ->where('start_date', '<=', \Carbon\Carbon::now()->toDateString() )
                 ->where('end_date', '>=', \Carbon\Carbon::now()->toDateString() )
+                ->where('estados_id', 1)
                 ->latest()
                 ->get();
     }
