@@ -73,6 +73,7 @@ return [
         public_path('storage') => storage_path('app/public'),
         public_path('locales') => storage_path('app/locales'),
         public_path('usuarios') => storage_path('app/usuarios'),
+        public_path('evidencias') => storage_path('app/evidencias'),
     ],
 
 ];
