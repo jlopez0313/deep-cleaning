@@ -233,8 +233,8 @@ class VisitasController extends Controller
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
                 ->where($field, $user->id)
-                ->where('start_date', '>=', \Carbon\Carbon::now()->toDateString() )
-                ->where('end_date', '<=', \Carbon\Carbon::now()->toDateString() )
+                ->where('start_date', '<=', \Carbon\Carbon::now()->toDateString() )
+                ->where('end_date', '>=', \Carbon\Carbon::now()->toDateString() )
                 ->latest()
                 ->get();
     }

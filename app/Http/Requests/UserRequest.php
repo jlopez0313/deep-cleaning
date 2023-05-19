@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
             'roles_id' => 'required',
             'name' => 'required',
             'email' => 'required|email|'.Rule::unique(User::class)->ignore($this->id),
-            'password' => Rule::requiredIf(!$this->password),
+            'password' => 'sometimes|nullable',
             'foto' => 'sometimes|nullable|image',
         ];
     }

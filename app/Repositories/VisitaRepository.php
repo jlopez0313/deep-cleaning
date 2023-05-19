@@ -10,12 +10,19 @@ class VisitaRepository
     }
 
     public function store( $data ) {
+        $startDate = \Carbon\Carbon::parse($data->fecha . ' ' . $data->start_time . ':00');
+        $endDate = \Carbon\Carbon::parse($data->fecha . ' ' . $data->end_time . ':00');
+
+        if ( $endDate < $startDate ) {
+            $endDate = $endDate->addDay();
+        }
+
         $visita = \App\Models\Visitas::create([
             'locales_id' => $data->local['id'],
             'created_by' => \Auth::id(),
             'attended_by' => $data->limpiador['id'],
-            'start_date' => \Carbon\Carbon::parse($data->fecha . ' ' . $data->start_time . ':00'),
-            'end_date' => \Carbon\Carbon::parse($data->fecha . ' ' . $data->end_time . ':00'),
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'latitud' => $data->latitud,
             'longitud' => $data->longitud,
             'estados_id' => 1,
