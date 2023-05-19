@@ -175,8 +175,8 @@ class VisitasController extends Controller
     public function finalizar(VisitasRequest $request, Visitas $visita)
     {
         $visita->estados_id = 2;
-        $visita->started_at = $request->started_at;
-        $visita->finished_at = $request->finished_at;
+        $visita->started_at = \Carbon\Carbon::parse($request->started_at);
+        $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
         $visita->save();
 
         $list = [];
