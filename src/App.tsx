@@ -1,10 +1,12 @@
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router'
-import HomePage from '@/pages/Home/HomePage'
+import { HomePage } from '@/pages/Home/HomePage'
 import { VisitasPage } from '@/pages/Visitas/VisitasPage'
 import { VisitaPage } from '@/pages/Visita/VisitaPage'
 import { LoginPage } from '@/pages/Login/LoginPage'
+import { EjecucionPage } from '@/pages/Ejecucion/EjecucionPage'
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -23,7 +25,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import { clipboardOutline, ellipsisHorizontalOutline, homeOutline } from 'ionicons/icons';
+import { clipboardOutline, homeOutline, logOutOutline } from 'ionicons/icons';
 
 import { getUser } from './helpers/onboarding';
 import UIContext from "./context/Context";
@@ -45,11 +47,15 @@ const App: React.FC = () => {
             <Route exact={true} path="/home" render={() => <HomePage />} />
             <Route exact={true} path="/visitas" render={() => <VisitasPage />} />
             <Route exact={true} path="/search" render={() => <VisitasPage />} />
+            
             <Route path="/visita/:id" component={VisitaPage} />
+            <Route path="/ejecucion/:id" component={EjecucionPage} />
             <Route path="/login" component={LoginPage} />
+
             <Route exact path="/">
                 <Redirect to="/login" />
             </Route>
+
           </IonRouterOutlet>
 
           <IonTabBar slot="bottom" style={tabBarStyle}>
@@ -64,8 +70,8 @@ const App: React.FC = () => {
             </IonTabButton>
 
             <IonTabButton tab="search" href="/login">
-              <IonIcon icon={ellipsisHorizontalOutline} />
-              <IonLabel>Más</IonLabel>
+              <IonIcon icon={logOutOutline} />
+              <IonLabel>Salir</IonLabel>
             </IonTabButton>
 
           </IonTabBar>

@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCheckbox, IonCol, IonIcon, IonImg, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonRow, IonSkeletonText, IonThumbnail } from '@ionic/react';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import React, { useEffect, useState } from 'react'
+import { IonButton, IonCol, IonGrid, IonIcon, IonImg, IonLabel, IonRow, IonSkeletonText } from '@ionic/react';
 import styles from './Visita.module.scss';
-import { attachOutline } from 'ionicons/icons';
+import { chevronBackOutline } from 'ionicons/icons';
+import { Maps } from '@/components/Maps/Maps';
+import { Link } from 'react-router-dom'
 
 type Servicio = {
     id: string;
@@ -15,6 +16,8 @@ type Servicio = {
 
 type Props = {
     visita: {
+        start_date: '',
+        end_date: '',
         local: {
             local: string;
             foto: string;
@@ -26,102 +29,77 @@ type Props = {
 
 export const Visita = ( {visita}: Props ) => {
 
-    
-    const [data, setVisita] = useState( visita );
+    const [ data, setVisita ] = useState( visita );
+    const [ height, setHeight ] = useState({ mapHeight: '75%', listHeight: '25%' })
+    const [ markers, setMarkers ] = useState<any>([])
 
     const getPhotoUrl = ( foto: string ) => {
-        return `${import.meta.env.VITE_BASE_BACK}/${foto}`
+        return foto ? `${import.meta.env.VITE_BASE_BACK}/${foto}` : "https://ionicframework.com/docs/img/demos/card-media.png"
     }
-
-    const takePicture = async ( index: number ) => {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: true,
-          resultType: CameraResultType.Uri,
-          // source: CameraSource.Camera
-        });
-      
-        // image.webPath will contain a path that can be set as an image src.
-        // You can access the original file using image.path, which can be
-        // passed to the Filesystem API to read the raw data of the image,
-        // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-
-        const servicio = data.checklist[ index ]
-        servicio.evidencia = image.webPath || '';
-        setVisita( {...data, checklist: [...data.checklist]} );
-
-        // Can be set to the src of an image now
-        // imageElement.src = imageUrl;
-    };
-
-    
 
     useEffect(() => {
         setVisita(visita)
+        if ( visita?.local ) {
+            setMarkers([ visita.local ] )
+        }
     }, [visita])
 
     return (
         <>
-            <IonLabel >
-                <strong> Basic Information </strong>
-            </IonLabel>
-            
-            <IonCard>
-                <IonCardContent>
-                    <IonItem class={`ion-no-padding ${styles.visita}`}>
-                        {
-                            data?.local ? 
-                            <>
-                                <IonThumbnail slot="start">
-                                    <IonImg src={ getPhotoUrl( data.local.foto ) } />
-                                </IonThumbnail>
-                                <IonLabel>
-                                    <h3>
-                                        <strong> { data.local.local } </strong>
-                                    </h3>
-                                    <p>
-                                        { data.local.direccion }
-                                    </p>
-                                </IonLabel>
-                            </>
-                            :
-                            <>
-                                <IonThumbnail slot="start">
-                                    <IonSkeletonText animated={true} />
-                                </IonThumbnail>
-                                <IonLabel>
-                                    <h3>
-                                        <IonSkeletonText animated={true} style={{ width: '50%' }} />
-                                    </h3>
-                                    <p>
-                                        <IonSkeletonText animated={true} style={{ width: '70%' }} />
-                                    </p>
-                                </IonLabel>
-                            </>
-
-                        }
-                    </IonItem>
-                </IonCardContent>
-            </IonCard>
-
-            <IonList>
+            <div style={{height: height.mapHeight, position: 'relative'}} >
+                <Maps height={height.mapHeight} markers={markers}/>
+                <Link to='/visitas'>
+                    <IonButton className={styles.backButton}>
+                        <IonIcon icon={chevronBackOutline} />
+                    </IonButton>
+                </Link>
+            </div>
+                
             {
-                data?.checklist?.map( (service, idx) => {
-                    return (
-                        <Fragment key={idx}>
-                            <IonItem>
-                                { service.categoria.categoria }
-                            </IonItem>
-                            <IonImg src={ service.evidencia } />
-                            <IonButton type='button' expand='block' onClick={() => takePicture( idx )}>
-                                <IonIcon icon={attachOutline} slot="start" />
-                                Attach Evidence
-                            </IonButton>
-                        </Fragment>
-                    )
-                })
+                data?.local ?
+                    <IonGrid className={styles.visita}>
+                        <IonRow class='ion-align-items-center'>
+                            <IonCol size='3'>
+                                <IonImg src={ getPhotoUrl( visita.local.foto ) }/>
+                            </IonCol>
+                            <IonCol size='9'>
+                                <h4 className='ion-no-margin ion-margin-top'>
+
+                                    <strong> { visita.local.local } </strong>
+                                </h4>
+                                <IonLabel>
+                                    { visita.local.direccion }
+                                </IonLabel>
+                            </IonCol>
+                        </IonRow>
+                        <IonRow>
+                            <IonCol>
+                                <IonLabel> Horario desde: </IonLabel>
+                            </IonCol>
+                            <IonCol>
+                                <IonLabel> Horario hasta: </IonLabel>
+                            </IonCol>
+                        </IonRow>
+                        <IonRow>
+                            <IonCol> <IonLabel> {visita.start_date} </IonLabel> </IonCol>
+                            <IonCol> <IonLabel> {visita.end_date} </IonLabel> </IonCol>
+                        </IonRow>
+                    </IonGrid>
+                :
+                    <IonRow class='ion-align-items-center'>
+                        <IonCol size='3'>
+                            <IonSkeletonText animated={true} style={{ height: '50px' }}/>
+                        </IonCol>
+                        <IonCol>
+                            <h3 className='ion-no-margin ion-margin-top'>
+                                <IonSkeletonText animated={true} style={{ width: '50%' }} />
+                            </h3>
+                            <p className='ion-no-margin'>
+                                <IonSkeletonText animated={true} style={{ width: '70%' }} />
+                            </p>
+                        </IonCol>
+                    </IonRow>
             }
-            </IonList>
         </>
     )
 }

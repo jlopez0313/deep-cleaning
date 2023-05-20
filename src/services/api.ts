@@ -38,7 +38,13 @@ export const baseApi = () => {
             },
         };
 
-        return await CapacitorHttp.get(options);
+        const response = await CapacitorHttp.get(options);
+
+        if( response.status == 200 || response.status == 201 ) {
+            return Promise.resolve( response )
+        } else {
+            return Promise.reject( response )
+        }
     };
     
     const post = async (url: string, formData: any, customHeaders: HttpHeaders = {}) => {
@@ -51,7 +57,13 @@ export const baseApi = () => {
             data: formData
         };
 
-        return await CapacitorHttp.post( options )
+        const response = await CapacitorHttp.post( options )
+
+        if( response.status == 200 || response.status == 201 ) {
+            return Promise.resolve( response )
+        } else {
+            return Promise.reject( response )
+        }
     }
 
 
@@ -65,7 +77,13 @@ export const baseApi = () => {
             data: formData
         };
 
-        return await CapacitorHttp.put( options )
+        const response = await CapacitorHttp.put( options )
+
+        if( response.status == 200 || response.status == 201 ) {
+            return Promise.resolve( response )
+        } else {
+            return Promise.reject( response )
+        }
     };
 
     const remove = async (url: string, formData: any, customHeaders: HttpHeaders = {}) => {
@@ -78,7 +96,13 @@ export const baseApi = () => {
             data: formData
         };
 
-        return await CapacitorHttp.delete( options )
+        const response = await CapacitorHttp.delete( options )
+
+        if( response.status == 200 || response.status == 201 ) {
+            return Promise.resolve( response )
+        } else {
+            return Promise.reject( response )
+        }
     }
 
     return { get, post, put, remove }

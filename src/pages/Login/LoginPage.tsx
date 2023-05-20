@@ -1,9 +1,9 @@
 import React from 'react'
-import { useParams } from 'react-router';
-import { IonButtons, IonContent, IonFooter, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonFooter, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Login } from '@/components/Login/Login';
 import UIContext from "@/context/Context";
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
+import styles from './Login.module.scss';
 
 export const LoginPage = () => {
   const { setShowTabs }: any = useContext(UIContext);
@@ -18,14 +18,9 @@ export const LoginPage = () => {
 
   return (
     <IonPage>
-      <IonContent>
+      <IonContent fullscreen={true} class='ion-no-padding' className={styles.layout}>
         <Login />
       </IonContent>
-      <IonFooter>
-        <IonToolbar class='ion-text-center'>
-            © 2023.
-        </IonToolbar>
-      </IonFooter>
     </IonPage>
   )
 }

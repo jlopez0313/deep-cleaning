@@ -1,3 +1,10 @@
+.backButton {
+    position: absolute;
+    bottom: 10px;
+    z-index: 999;
+    opacity: .85;
+}
+
 .visita {
     ion-row {
         ion-col {

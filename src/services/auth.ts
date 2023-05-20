@@ -7,16 +7,15 @@ export const login = async( formData: {} ) => {
     const headers: HttpHeaders = {};
     headers['Content-Type'] = 'application/json';
 
-    return await post('/login', formData, headers)
-    .catch((error) => {
-        console.log( 'wrong:', error );
-
+    try {
+        return await post('/login', formData, headers)
+    } catch( error: any ) {
         if (error.response) {
-            throw new Error(error.response.data.message)
+            Promise.reject(error.response.data.message)
         } else if (error.request) {
-            throw new Error(error.request)
+            Promise.reject(error.request)
         } else {
-            throw new Error(error.message)
+            Promise.reject(error.message)
         }
-    })
+    }
 }

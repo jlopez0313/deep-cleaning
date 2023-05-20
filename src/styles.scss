@@ -1,6 +1,28 @@
+@font-face {
+    font-family: "poppins";
+    src: local("poppins"),
+      url("./assets/fonts/Poppins/Poppins-Regular.ttf") format("woff");
+}
+
+@font-face {
+    font-family: "poppins-bold";
+    src: local("poppins-bold"),
+      url("./assets/fonts/Poppins/Poppins-Bold.ttf") format("woff");
+}
+
+html, body {
+    font-family: poppins;
+}
+
 :root {
-    --ion-bg-color: #f5f6fa;
     --background: red;
+    --ion-bg-color: #f5f6fa;
+    --ion-font-family: poppins;
+    --ion-color-primary: #164291;
+}
+
+.bg-primary {
+    background-color: var(--ion-color-primary);
 }
 
 ion-header {
@@ -12,6 +34,13 @@ ion-header {
         }
     }
 }
+
+/*
+body.scanner-active {
+    --background: transparent;
+    --ion-background-color: transparent;
+}
+*/
 
 .text-white {
     color: #fff!important;

@@ -1,9 +1,34 @@
-import React, { useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { Icon } from 'leaflet'
 
-export const MapComponent = () => {
+type Props = {
+    markers: any[]
+}
 
-    const map = useMap()
+export const MapComponent = memo( ( { markers }: Props ) => {
+
+    const map = useMap();
+
+    const iconRetinaUrl = '/assets/images/marker-icon-2x.png';
+    const iconUrl = '/assets/images/marker-icon.png';
+    const shadowUrl = '/assets/images/marker-shadow.png';
+    const iconDefault = new Icon({
+        iconRetinaUrl,
+        iconUrl,
+        shadowUrl,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41]
+    });
+
+    useEffect(() => {
+        if(markers.length > 0) {
+            map.setView([markers[0].latitud, markers[0].longitud]);
+        }
+    }, [markers]);
 
     setTimeout(()=> {
         map.invalidateSize();
@@ -12,11 +37,17 @@ export const MapComponent = () => {
     return (
         <>
             <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"/>
-            <Marker position={[51.505, -0.09]}>
-                <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-            </Marker>
+            {
+                markers.map( (marker: any, key) => {
+                    return (
+                        <Marker position={[marker.latitud, marker.longitud]} key={key} icon={iconDefault}>
+                            <Popup>
+                                { marker.local }
+                            </Popup>
+                        </Marker>
+                    )
+                })
+            }
         </>
     )
-}
+})
