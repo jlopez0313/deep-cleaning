@@ -54,6 +54,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
     Route::prefix('locales')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\LocalesController', 'all']);
         Route::post('{id}', ['App\Http\Controllers\api\v1\LocalesController', 'update']);
+        Route::get('qr/{id}', ['App\Http\Controllers\api\v1\LocalesController', 'QR']);
     });
     Route::apiResource('locales', 'App\Http\Controllers\api\v1\LocalesController');
 

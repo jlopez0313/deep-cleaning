@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LocalesRequest;
 use App\Http\Resources\LocalResource;
@@ -153,5 +154,15 @@ class LocalesController extends Controller
     public function all()
     {
         return \App\Models\Local::latest()->get();
+    }
+
+    public function QR($id) 
+    {
+        // $path = \Storage::disk('public')->get('logo.png');
+        // $path = '/public/images/logo.png';
+        // $png = QrCode::format('png')->size(570)->mergeString($path, .3)->errorCorrection('H')->margin(0)->generate( $id );
+        $png = QrCode::size(570)->margin(0)->generate( $id );
+        $base64 = base64_encode($png);
+        return $base64;
     }
 }

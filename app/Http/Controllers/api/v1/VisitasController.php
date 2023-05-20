@@ -173,7 +173,7 @@ class VisitasController extends Controller
     }
 
     public function finalizar(VisitasRequest $request, Visitas $visita)
-    {
+    {        
         $visita->estados_id = 2;
         $visita->started_at = \Carbon\Carbon::parse($request->started_at);
         $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
@@ -185,7 +185,7 @@ class VisitasController extends Controller
             $path = '';
             if ( $checklist->evidencia ) {
                 $file = $request->evidencia[$key];
-                $path = $file->store('evidencias');
+                $path = $file->store('evidencias');                
             }
 
             \App\Models\Checklist::find($checklist->id)
