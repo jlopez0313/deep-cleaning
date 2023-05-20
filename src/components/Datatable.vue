@@ -9,6 +9,9 @@
         table-class-name="customize-table"
     >
         <template #item-acciones="item">
+            <router-link v-if="acciones.includes('qr')" :to="`/${modulo}/qr/${item.id}`" title="QR" class="btn btn-outline-secondary btn-sm">
+                <i class="mdi mdi-qrcode"></i> 
+            </router-link>
             <router-link v-if="acciones.includes('ver')" :to="`/${modulo}/show/${item.id}`" title="Ver" class="btn btn-outline-secondary btn-sm">
                 <i class="mdi mdi-magnify"></i> 
             </router-link>

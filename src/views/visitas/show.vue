@@ -126,7 +126,7 @@ const onSearch = async () => {
             lng: form.longitud,
             draggable: false,
             changeColor: true,
-            title: 'Finalizado'
+            title: 'Ejecución'
         });
 
         markers.value.push({

@@ -15,7 +15,7 @@ const props = defineProps({
 const map = ref( null );
 
 const loadMap = () => {
-    map.value = L.map("mapContainer").setView([36.05, -92.05], 5);
+    map.value = L.map("mapContainer").setView([27.95, -82.47], 8);
 
     L.tileLayer(
         "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 
@@ -29,12 +29,29 @@ const loadMap = () => {
     const canvasRenderer = L.canvas({ pane: "customPane" });
     customPane.style.zIndex = 399; // put just behind the standard overlay pane which is at 400
 
+    const iconRetinaUrl = '/assets/images/marker-icon-2x.png';
+    const iconUrl = '/assets/images/marker-icon.png';
+    const shadowUrl = '/assets/images/marker-shadow.png';
+    const iconDefault = L.icon({
+        iconRetinaUrl,
+        iconUrl,
+        shadowUrl,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41]
+    });
+
     props.markers.forEach( location => {
         if (location.lat && location.lng) {
 
             const marker = L.marker(
                     [location.lat, location.lng],
-                    {draggable: location.draggable}
+                    {
+                        draggable: location.draggable,
+                        icon: iconDefault
+                    }
             ).bindTooltip(
                 location.title || 'Location', 
                 {
@@ -43,6 +60,7 @@ const loadMap = () => {
                 }
             )
             .addTo(map.value);
+
             
             if ( location.changeColor ) {
                 const random_value = Math.floor(Math.random() * 360);

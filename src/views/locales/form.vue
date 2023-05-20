@@ -145,8 +145,8 @@ const route  = useRoute();
 
 const markers= ref([
     {
-        lat: 36,
-        lng: -92,
+        lat: 27.95,
+        lng: -82.47,
         draggable: true
     }
 ]);

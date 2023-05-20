@@ -46,7 +46,7 @@ const headers = [
 const items = ref([]);
 const isLoading = ref( false );
 const serverItemsLength = ref(0);
-const acciones = ref(['editar', 'eliminar']);
+const acciones = ref(['qr', 'editar', 'eliminar']);
 
 const loadFromServer = async( serverOptions ) => {
     try {

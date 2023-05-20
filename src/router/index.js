@@ -74,6 +74,10 @@ const routes = [
             {
                 path: ':id',
                 component: () => import('@/views/locales/form.vue')
+            },
+            {
+                path: 'qr/:id',
+                component: () => import('@/views/locales/qr.vue')
             }
         ]
     },

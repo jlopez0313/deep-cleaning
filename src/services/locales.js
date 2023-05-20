@@ -117,3 +117,19 @@ export const removeLocal = async( id ) => {
         }
     })
 }
+
+export const getQR = async( id ) => {
+    return await baseApi.get(module + '/qr/' + id)
+    .catch((error) => {
+        if( error.response.status == 401 ) {
+            router.push('/login');            
+            throw new Error('No autenticado.')
+        } else if (error.response) {
+            throw new Error(error.response.data.message)
+        } else if (error.request) {
+            throw new Error(error.request)
+        } else {
+            throw new Error(error.message)
+        }
+    })
+}
