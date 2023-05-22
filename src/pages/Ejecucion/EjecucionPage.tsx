@@ -8,7 +8,8 @@ import { Ejecucion } from '@/components/Ejecucion/Ejecucion';
 import { AlertConfirm } from '@/components/shared/AlertConfirm';
 import { useHistory } from 'react-router-dom'
 import { finishVisita } from '@/services/visitas';
-import { Geolocation } from '@capacitor/geolocation';
+import { Geolocation, Position } from '@capacitor/geolocation';
+import { Coordinates } from '@/helpers/Coordinates';
 
 export const EjecucionPage = () => {
 
@@ -27,7 +28,12 @@ export const EjecucionPage = () => {
         setFinished( true )
     }
 
-    const checkPermission = async () => {
+    const getDistance = (currentPosition: Position, visita: any ) => {
+        const { getDistance } = Coordinates( currentPosition, { lat: visita.local.latitud || 0, lon: visita.local.longitud || 0  } )
+        return getDistance();
+    }
+
+    const checkPermission = async ( ) => {
         const status = await Geolocation.checkPermissions(); 
         if ( status ) {
             return true;
@@ -49,12 +55,26 @@ export const EjecucionPage = () => {
         if ( allowed ) {
             const coordinates = await Geolocation.getCurrentPosition();        
             const visita = await findVisita( params.id )
-            
+
             visita.data.started_at = new Date().toISOString()
             visita.data.latitud = coordinates.coords.latitude;
             visita.data.longitud = coordinates.coords.longitude;
-    
-            setVisita( visita.data );
+            
+            
+            const distance = getDistance( coordinates, visita.data )
+            if ( (distance * 1000) <= 30 ) {
+                await setVisita( visita.data );
+            } else {
+                presentAlert({
+                    header: 'Alerta!',
+                    subHeader: 'Excedes distancia.',
+                    message: 'Debes acercarte mas a la ubicación del sitio! ',
+                    buttons: ['OK'],
+                })
+
+                history.goBack();
+            }
+
         }
     }
 
@@ -108,7 +128,7 @@ export const EjecucionPage = () => {
                             <IonIcon icon={ exitOutline } />
                         </IonButton>
 
-                        <AlertConfirm message='Realmente deseas salir?' present='back-button' onButtonClick={(evt: boolean) => onBackClick(evt) } />
+                        <AlertConfirm message='Realmente deseas salir de esta ejecución?' present='back-button' onButtonClick={(evt: boolean) => onBackClick(evt) } />
 
                     </IonButtons>
                 </IonToolbar>

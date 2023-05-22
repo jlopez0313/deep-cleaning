@@ -76,7 +76,14 @@ export const Login = () => {
                                         ></IonInput>
                                     </IonItem>
                                 </IonList>
-                                    <IonButton color="dark" type='button' className='ion-margin-top' expand="block" onClick={(evt) => doLogin(evt)}> Iniciar Sesión </IonButton>
+                                    <IonButton
+                                        color="dark" 
+                                        type='button'
+                                        className='ion-margin-top'
+                                        expand="block"
+                                        disabled={ !email || !password }
+                                        onClick={(evt) => doLogin(evt)}
+                                    > Iniciar Sesión </IonButton>
 
                                     <IonLoading trigger="open-loading" message="Dismissing after 3 seconds..." duration={3000} />
 

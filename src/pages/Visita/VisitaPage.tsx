@@ -15,7 +15,7 @@ export const VisitaPage = () => {
     const params: any = useParams();
     const history = useHistory();
     
-    const [visita, setVisita ] = useState({});
+    const [visita, setVisita ] = useState<any>({});
     const [isScanning, setIsScanning ] = useState(false);
 
     const doGetVisita = async () => {
@@ -62,7 +62,8 @@ export const VisitaPage = () => {
             // document.querySelector('body')?.classList.remove('scanner-active');
     
             if (result.hasContent) {
-                if ( params.id === result.content) {
+                console.log(visita.local.id, result.content)
+                if ( visita.local.id == result.content) {
                     history.push('/ejecucion/' + params.id)
                 } else {
                     presentAlert({
@@ -84,6 +85,7 @@ export const VisitaPage = () => {
     }
 
     useIonViewWillEnter(() => {
+        setIsScanning( false )
         setShowTabs(false);
     })
 

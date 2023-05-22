@@ -57,6 +57,7 @@ export const Visita = ( {visita}: Props ) => {
                 
             {
                 data?.local ?
+                <div style={{height: height.listHeight, position: 'relative'}} >
                     <IonGrid className={styles.visita}>
                         <IonRow class='ion-align-items-center'>
                             <IonCol size='3'>
@@ -85,6 +86,7 @@ export const Visita = ( {visita}: Props ) => {
                             <IonCol> <IonLabel> {visita.end_date} </IonLabel> </IonCol>
                         </IonRow>
                     </IonGrid>
+                </div>
                 :
                     <IonRow class='ion-align-items-center'>
                         <IonCol size='3'>
