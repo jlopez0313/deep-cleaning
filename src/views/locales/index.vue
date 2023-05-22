@@ -39,6 +39,7 @@ const breadcrumb = [
     {title: title, active: true}
 ]
 const headers = [
+    { text: "Logo", value: "foto" },
     { text: "Local", value: "local" },
     { text: "Acciones", value: "acciones" }
 ]

@@ -15,7 +15,7 @@ const props = defineProps({
 const map = ref( null );
 
 const loadMap = () => {
-    map.value = L.map("mapContainer").setView([27.95, -82.47], 8);
+    map.value = L.map("mapContainer").setView([ props.markers[0]?.lat || 27.95, props.markers[0]?.lng  || -82.47], 8);
 
     L.tileLayer(
         "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 

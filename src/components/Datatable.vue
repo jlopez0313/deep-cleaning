@@ -8,6 +8,11 @@
         :items="items"
         table-class-name="customize-table"
     >
+        
+        <template #item-foto="item">
+            <img :src="getPhotoUrl( item.foto )" class="foto" />
+        </template>
+
         <template #item-acciones="item">
             <router-link v-if="acciones.includes('qr')" :to="`/${modulo}/qr/${item.id}`" title="QR" class="btn btn-outline-secondary btn-sm">
                 <i class="mdi mdi-qrcode"></i> 
@@ -44,6 +49,10 @@ const serverOptions = ref({
     rowsPerPage: 25
 });
 
+const getPhotoUrl = ( fotoUrl ) => {
+    return import.meta.env.VITE_BASE_BACK + '/' + fotoUrl
+}
+
 watch(serverOptions, ( value ) => {
     loading.value = true;
     emit('dataChange', serverOptions.value);
@@ -57,3 +66,10 @@ onBeforeMount( () => {
     emit('dataChange', serverOptions.value);
 })
 </script>
+
+<style scoped>
+    .foto {
+        max-width: 70px;
+        max-height: 70px;
+    }
+</style>
