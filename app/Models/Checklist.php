@@ -14,6 +14,8 @@ class Checklist extends Model
     protected $fillable = [
         'categorias_id',
         'visitas_id',
+        'evidencia',
+        'done'
     ];
 
     public function categoria() {
