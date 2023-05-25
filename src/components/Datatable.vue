@@ -1,12 +1,15 @@
 <template>
     <EasyDataTable
         buttons-pagination
+        v-model:items-selected="selectedItems"
         v-model:server-options="serverOptions"
+        theme-color="#3b5de7"
         :server-items-length="serverItemsLength"
         :loading="loading"
         :headers="headers"
         :items="items"
         table-class-name="customize-table"
+        @update:itemsSelected="$event => onItemsSelected($event)"
     >
         
         <template #item-foto="item">
@@ -32,9 +35,11 @@
 
 <script setup>
 import { ref, watch, onBeforeMount } from 'vue';
+
 const loading = ref(false);
 
 const emit = defineEmits()
+const selectedItems = ref([]);
 
 const props = defineProps({
     modulo: String,
@@ -43,6 +48,10 @@ const props = defineProps({
     items: Array,
     serverItemsLength: Number
 })
+
+const onItemsSelected = () => {
+    emit('onItemsSelected', selectedItems.value);
+}
 
 const serverOptions = ref({
     page: 1,

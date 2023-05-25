@@ -1,5 +1,9 @@
 @import "@/assets/css/data-table.css";
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 .metismenu .router-link-active,
 .metismenu .router-link-active i {
     color: #3b5de7 !important;

@@ -3,12 +3,21 @@
 
     <div class="card">
         <div class="card-body">
+            <div class="mb-3 d-flex">
+                <button class="ms-auto btn btn-primary" type="button" :disabled="!selectedItems.length">
+                    <i class="mdi mdi-delete-outline"></i>
+                    Eliminar
+                </button>
+            </div>
+
+            
             <Datatable
                 modulo="usuarios"
                 :items="items"
                 :headers="headers"
                 :acciones="acciones"
                 :serverItemsLength="serverItemsLength"
+                @onItemsSelected="onItemsSelected($event)"
                 @dataChange="loadFromServer($event)"
                 @delete="doRemove($event)"
             ></Datatable>
@@ -46,10 +55,17 @@ const headers = [
 ]
 
 const items = ref([]);
+const selectedItems = ref([]);
 const isLoading = ref( false );
 const serverItemsLength = ref(0);
 const acciones = ref(['editar', 'eliminar']);
 
+const onItemsSelected = ( data ) => {
+    selectedItems.value = data.map( item => {
+        return item.id
+    })
+    console.log(selectedItems.value);
+}
 
 const loadFromServer = async( serverOptions ) => {
     try {

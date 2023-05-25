@@ -12,8 +12,8 @@
                                 <span class="form-control"> {{ form.local.local }} </span>
                             </div>
                             <div class="mt-3">
-                                <label class="form-label"> Fecha de Visita </label>
-                                <span class="form-control"> {{ form.fecha }} </span>
+                                <label class="form-label"> Fecha Límite </label>
+                                <span class="form-control"> {{ form.end_date }} </span>
                             </div>                        
                         </div>
                         <div class="col-lg-6">
@@ -48,12 +48,18 @@
                             <tr>
                                 <th>Checklist</th>
                                 <th>Finalizada</th>
+                                <th>Evidencia</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in form.checkList" :key="index">
                                 <td> {{ item.categoria.categoria }} </td>
                                 <td> {{ item.done ? 'Si' : 'No' }} </td>
+                                <td>
+                                    <img :src="getPhotoUrl(item.evidencia)" class="foto cursor-pointer" 
+                                        @click="openModal( item.evidencia )"
+                                    />
+                                </td>
                             </tr>
                         </tbody>
                     </table>                    
@@ -64,10 +70,16 @@
         </div>
 
     </form>
-    
+
+    <BModal v-model="showModal" scrollable centered size="md" title="Evidencia">
+        <img :src="modalPhotoSrc" class="modalPhoto" />
+    </BModal>
+
 </template>
 
 <script setup>
+import { BButton, BModal } from "bootstrap-vue-next";
+
 import { ref, watch, reactive, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -87,7 +99,9 @@ const breadcrumb = [
 const router = useRouter();
 const route  = useRoute();
 
+const showModal = ref( false )
 const isLoading = ref( false );
+const modalPhotoSrc = ref( false );
 const id = ref( route.params.id || null );
 const markers= ref([]);
 
@@ -100,6 +114,7 @@ const initialState = {
         id: ''
     },
     fecha: '',
+    end_date: '',
     finished_at: '',
     latitud: '',
     longitud: '',
@@ -108,6 +123,15 @@ const initialState = {
 
 const form = reactive({...initialState, usuarios: []})
 
+const getPhotoUrl = (phtoUrl) => {
+    return import.meta.env.VITE_BASE_BACK + '/' + phtoUrl
+}
+
+const openModal = (phtoUrl) => {
+    modalPhotoSrc.value = import.meta.env.VITE_BASE_BACK + '/' + phtoUrl
+    showModal.value = true;
+}
+
 const onSearch = async () => {
     try {
         isLoading.value = true;
@@ -115,19 +139,12 @@ const onSearch = async () => {
         form.id = id.value
         form.local = data.local
         form.fecha = data.fecha
+        form.end_date = data.end_date
         form.finished_at = data.finished_at
         form.latitud = data.latitud
         form.longitud = data.longitud    
         form.limpiador = data.attender
         form.checkList = data.checklist;
-
-        markers.value.push({
-            lat: form.latitud,
-            lng: form.longitud,
-            draggable: false,
-            changeColor: true,
-            title: 'Ejecución'
-        });
 
         markers.value.push({
             lat: form.local.latitud,
@@ -136,6 +153,14 @@ const onSearch = async () => {
             changeColor: false,
             title: form.local.local
         })
+
+        markers.value.push({
+            lat: form.latitud,
+            lng: form.longitud,
+            draggable: false,
+            changeColor: true,
+            title: 'Ejecución'
+        });
 
     } catch (err){
         Alerts.error( err.message );
@@ -162,8 +187,17 @@ watch(
 )
 
 </script>
+
 <style scoped>
 i {
     font-size: 1rem;
-}   
+}
+.foto {
+    max-width: 70px;
+    max-height: 70px;
+}
+
+.modalPhoto {
+    width: 100%;
+}
 </style>
