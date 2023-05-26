@@ -1,5 +1,21 @@
 @import "@/assets/css/data-table.css";
 
+@font-face {
+    font-family: "poppins";
+    src: local("poppins"),
+      url("@/assets/fonts/Poppins/Poppins-Regular.ttf") format("woff");
+}
+
+@font-face {
+    font-family: "poppins-bold";
+    src: local("poppins-bold"),
+      url("@/assets/fonts/Poppins/Poppins-Bold.ttf") format("woff");
+}
+
+html, body {
+    font-family: poppins;
+}
+
 .cursor-pointer {
     cursor: pointer;
 }
