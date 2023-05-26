@@ -185,7 +185,7 @@ class VisitasController extends Controller
             $path = '';
             if ( $checklist->evidencia ) {
                 $file = $request->evidencia[$key];
-                $path = $file->store('evidencias');                
+                $path = $file->store('evidencias');
             }
 
             \App\Models\Checklist::find($checklist->id)
