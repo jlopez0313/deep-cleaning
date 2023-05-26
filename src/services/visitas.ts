@@ -7,33 +7,38 @@ export const myJob = async () => {
     const {user} = getUser();
     const { get } = baseApi();
 
-    try {
-        return await get( module + '/para-hoy/' + 'attended_by/' + user?.id )
-    } catch( error: any ) {
-        if (error.response) {
-            Promise.reject(error.response.data.message)
-        } else if (error.request) {
-            Promise.reject(error.request)
-        } else {
-            Promise.reject(error.message)
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await get( module + '/para-hoy/' + 'attended_by/' + user?.id ) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
         }
-    }
+    })
+
 }
 
 export const findVisita = async( id: number ) => {
     const { get } = baseApi();
 
-    try {
-        return await get(module + '/show/' + id)
-    } catch( error: any ) {
-        if (error.response) {
-            Promise.reject(error.response.data.message)
-        } else if (error.request) {
-            Promise.reject(error.request)
-        } else {
-            Promise.reject(error.message)
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await get(module + '/show/' + id) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
         }
-    }
+    });
 }
 
 export const finishVisita = async (data: any) => {
@@ -47,8 +52,6 @@ export const finishVisita = async (data: any) => {
             evidencia: blobToFile ( item.evidencia )
         }
     })
-
-    console.log(tmpData.checklist);
 
     let formData = new FormData();
     
@@ -64,17 +67,19 @@ export const finishVisita = async (data: any) => {
 
     formData.set('checklist', JSON.stringify( tmpData.checklist ) )
 
-    try {
-        return await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" })
-    } catch( error: any ) {
-        if (error.response) {
-            Promise.reject(error.response.data.message)
-        } else if (error.request) {
-            Promise.reject(error.request)
-        } else {
-            Promise.reject(error.message)
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" }) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
         }
-    }
+    });
 }
 
 

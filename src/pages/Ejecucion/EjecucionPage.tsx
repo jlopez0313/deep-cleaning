@@ -1,4 +1,4 @@
-import { IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButton, IonIcon, useIonLoading, useIonAlert } from '@ionic/react';
+import { IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButton, IonIcon, useIonLoading, useIonAlert, useIonViewWillEnter } from '@ionic/react';
 import { useContext, useEffect, useState } from 'react';
 import UIContext from "@/context/Context";
 import { checkmarkOutline, exitOutline } from 'ionicons/icons';
@@ -86,7 +86,9 @@ export const EjecucionPage = () => {
 
     const onFinishClick = async ( clicked: boolean ) => {
         if( clicked ) {
-            visita.finished_at = new Date().toISOString()
+            const tzoffset = new Date().getTimezoneOffset() * 60000;
+            const curDate = new Date( Date.now() - tzoffset ).toISOString();
+            visita.finished_at = curDate;
             present({
                 message: 'Loading...',
             });
@@ -113,10 +115,10 @@ export const EjecucionPage = () => {
         }
     }
 
-    useEffect(() => {
+    useIonViewWillEnter(() => {
         setShowTabs(false);
         doGetVisita();
-    }, [])
+    })
 
     return (
         <IonPage>

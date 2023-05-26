@@ -8,6 +8,8 @@ import { myJob } from '@/services/visitas';
 
 export const HomePage = () => {
 
+  console.log(new Date(), new Date().toISOString(), new Date().toLocaleString());
+
   const {user} = getUser();
   const [visitas, setVisitas] = useState([])
   const [presentAlert] = useIonAlert();
