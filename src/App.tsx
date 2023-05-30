@@ -6,6 +6,7 @@ import { VisitasPage } from '@/pages/Visitas/VisitasPage'
 import { VisitaPage } from '@/pages/Visita/VisitaPage'
 import { LoginPage } from '@/pages/Login/LoginPage'
 import { EjecucionPage } from '@/pages/Ejecucion/EjecucionPage'
+import { DetallePage } from '@/pages/Detalle/DetallePage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -50,6 +51,7 @@ const App: React.FC = () => {
             
             <Route path="/visita/:id" component={VisitaPage} />
             <Route path="/ejecucion/:id" component={EjecucionPage} />
+            <Route path="/detalle/:id" component={DetallePage} />
             <Route path="/login" component={LoginPage} />
 
             <Route exact path="/">

@@ -2,11 +2,12 @@ import { IonContent, IonPage, IonToolbar, IonFooter, IonButton, IonIcon, useIonV
 import { Visita } from '@/components/Visita/Visita';
 import { useContext, useEffect, useState } from 'react';
 import UIContext from "@/context/Context";
-import { qrCodeOutline } from 'ionicons/icons';
+import { qrCodeOutline, searchOutline } from 'ionicons/icons';
 import { useParams } from 'react-router';
 import { findVisita } from '@/services/visitas';
 import { useHistory } from 'react-router-dom'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { isUserCleaner, isUserManager } from '@/helpers/roles';
 
 export const VisitaPage = () => {
     
@@ -84,6 +85,10 @@ export const VisitaPage = () => {
         BarcodeScanner.stopScan();
     }
 
+    const goToDetail = () => {
+        history.push('/detalle/' + params.id)
+    }
+
     useIonViewWillEnter(() => {
         setIsScanning( false )
         setShowTabs(false);
@@ -110,17 +115,28 @@ export const VisitaPage = () => {
             <IonFooter>
                 <IonToolbar className='ion-padding-horizontal'>
                     {
-                        !isScanning
+                        isUserCleaner()
                         ?
-                            <IonButton type='button' expand='block' onClick={() => dataToScan()} > 
-                                <IonIcon icon={qrCodeOutline} slot='start' />
-                                Escanear QR
-                            </IonButton>
+                            !isScanning
+                            ?
+                                <IonButton type='button' expand='block' onClick={() => dataToScan()} > 
+                                    <IonIcon icon={qrCodeOutline} slot='start' />
+                                    Escanear QR
+                                </IonButton>
+                            :
+                                <IonButton type='button' expand='block' onClick={() => stopScanning()} > 
+                                    <IonIcon icon={qrCodeOutline} slot='start' />
+                                    Detener Escaneo
+                                </IonButton>
                         :
-                            <IonButton type='button' expand='block' onClick={() => stopScanning()} > 
-                                <IonIcon icon={qrCodeOutline} slot='start' />
-                                Detener Escaneo
-                            </IonButton>
+                            isUserManager()
+                            ?
+                                <IonButton type='button' expand='block' onClick={() => goToDetail()} > 
+                                    <IonIcon icon={searchOutline} slot='start' />
+                                    Ver Visita
+                                </IonButton>
+                            :   null
+
                     }
                 </IonToolbar>
             </IonFooter>

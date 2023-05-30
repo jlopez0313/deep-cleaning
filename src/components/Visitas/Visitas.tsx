@@ -3,6 +3,7 @@ import { IonCol, IonImg, IonLabel, IonList, IonRow, IonSearchbar, IonSkeletonTex
 import { IonCard, IonCardContent } from '@ionic/react';
 import styles from './Visitas.module.scss';
 import { Maps } from '@/components/Maps/Maps';
+import { getPhotoUrl } from '@/helpers/photos';
 
 type Props = {
     visitas: [];
@@ -12,10 +13,6 @@ export const Visitas = memo( ( { visitas }: Props ) => {
 
     const [ height, setHeight ] = useState({ mapHeight: '50%', listHeight: '50%' })
     const [ markers, setMarkers ] = useState<any>([])
-    
-    const getPhotoUrl = ( foto: string ) => {
-        return foto ? `${import.meta.env.VITE_BASE_BACK}/${foto}` : "https://ionicframework.com/docs/img/demos/card-media.png"
-    }
 
     const handleInput = (ev: Event) => {
         let query = '';

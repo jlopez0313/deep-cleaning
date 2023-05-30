@@ -1,15 +1,20 @@
 import { baseApi } from "./api";
 import { getUser } from '@/helpers/onboarding';
 
+const { get, post } = baseApi();
+
 const module = '/visitas'
 
-export const myJob = async () => {
+export const myVisits = async () => {
     const {user} = getUser();
-    const { get } = baseApi();
+
+    const localesId = user.locales.map( (local: any) => {
+        return local.locales_id
+    })
 
     return new Promise( async(resolve, reject) => {
         try {
-            resolve( await get( module + '/para-hoy/' + 'attended_by/' + user?.id ) )
+            resolve( await post( module + '/locales/', { ids: localesId }, { "Content-type": "application/json" } ) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response.data.message)
@@ -20,12 +25,27 @@ export const myJob = async () => {
             }
         }
     })
+}
 
+export const myJob = async () => {
+    const {user} = getUser();
+
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await get( module + '/para-hoy/attended_by/' + user?.id ) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
+        }
+    })
 }
 
 export const findVisita = async( id: number ) => {
-    const { get } = baseApi();
-
     return new Promise( async(resolve, reject) => {
         try {
             resolve( await get(module + '/show/' + id) )
@@ -42,8 +62,6 @@ export const findVisita = async( id: number ) => {
 }
 
 export const finishVisita = async (data: any) => {
-    const { post } = baseApi();
-
     const tmpData = {...data, checklist:[...data.checklist]}
 
     tmpData.checklist = tmpData.checklist.map( (item: any) => {
@@ -70,6 +88,31 @@ export const finishVisita = async (data: any) => {
     return new Promise( async(resolve, reject) => {
         try {
             resolve( await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" }) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
+        }
+    });
+}
+
+export const approveVisita = async ( data: any ) => {
+    const tmpData = {...data}
+    tmpData.firma = blobToFile ( data.firma )
+        
+    let formData = new FormData();
+    
+    Object.keys(tmpData).forEach(key => {
+            formData.append( key, tmpData[key] )
+    });
+
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await post(module + '/aprobar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" }) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response.data.message)

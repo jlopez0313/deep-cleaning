@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { IonButton, IonCard, IonCardContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonSkeletonText, IonThumbnail } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCol, IonIcon, IonImg, IonItem, IonLabel, IonList, IonRow, IonSkeletonText, IonText, IonThumbnail } from '@ionic/react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import styles from './Ejecucion.module.scss';
-import { attachOutline } from 'ionicons/icons';
+import styles from './Detalle.module.scss';
+import { attachOutline, pencilOutline, trashOutline } from 'ionicons/icons';
 import { getPhotoUrl } from '@/helpers/photos';
+import SignatureCanvas from 'react-signature-canvas'
 
 type Servicio = {
     id: string;
@@ -16,6 +17,7 @@ type Servicio = {
 
 type Props = {
     visita: {
+        firma: null,
         start_date: '',
         end_date: '',
         local: {
@@ -25,33 +27,31 @@ type Props = {
         },
         checklist: [Servicio]
     },
-    onFinished: ( visita: any) => void,
+    onHasFinished: ( visita: any) => void,
 }
 
-export const Ejecucion = ( {visita, onFinished}: Props ) => {
+export const Detalle = ( {visita, onHasFinished}: Props ) => {
    
+    let sigPad: any = {};
     const [data, setVisita] = useState( visita );
+    
+    const clear = () => {
+        sigPad.clear();
+        sigPad.on();
+        onSetVisita( null );
+    }
 
-    const takePicture = async ( index: number ) => {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: true,
-          resultType: CameraResultType.Base64,
-          source: CameraSource.Camera
-        });
+    const trim = () => {
+        const firma = sigPad.getTrimmedCanvas().toDataURL('image/png');;
+        onSetVisita( firma );
+        sigPad.off();
+    }
 
-        const servicio = data.checklist[ index ]
-        servicio.evidencia = 'data:image/jpeg;base64,' + image.base64String || '';
-        setVisita( {...data, checklist: [...data.checklist]} );
-
-        hasFinished()
-    };
-
-    const hasFinished = () => {
-        const finished = visita.checklist.every( item => item.evidencia );
-        if ( finished) {
-            onFinished( visita )
-        }
+    const onSetVisita = async( firma: string | null ) => {
+        const visita: any = {...data}
+        visita.firma = firma;
+        await setVisita( visita );
+        onHasFinished( visita )
     }
 
     useEffect(() => {
@@ -102,7 +102,7 @@ export const Ejecucion = ( {visita, onFinished}: Props ) => {
                 </IonCardContent>
             </IonCard>
 
-            <IonList>
+            <IonList class='ion-margin-bottom'>
             {
                 data?.checklist?.map( (service, idx) => {
                     return (
@@ -111,17 +111,35 @@ export const Ejecucion = ( {visita, onFinished}: Props ) => {
                                 <strong> { service.categoria.categoria } </strong>
                             </IonItem>
                             {
-                                service.evidencia && <IonImg src={ service.evidencia } />
+                                service.evidencia && <IonImg src={ getPhotoUrl(service.evidencia) } />
                             }
-                            <IonButton type='button' expand='block' onClick={() => takePicture( idx )}>
-                                <IonIcon icon={attachOutline} slot="start" />
-                                Evidencia
-                            </IonButton>
                         </Fragment>
                     )
                 })
             }
             </IonList>
+
+            <strong> Firma: </strong>
+            <SignatureCanvas 
+                penColor='blue'
+                ref={(ref: any) => { sigPad = ref }}
+                canvasProps={{ width: 325, height: 120, className: styles.signCanvas}}
+            />
+
+            <IonRow>
+                <IonCol>
+                    <IonButton expand="block" onClick={clear}>
+                        <IonIcon icon={trashOutline} slot='start' />
+                        Limpiar
+                    </IonButton>
+                </IonCol>
+                <IonCol>
+                    <IonButton expand="block" onClick={trim} disabled={data.firma ? true : false}>
+                        <IonIcon icon={pencilOutline} slot='start' />
+                        Firmar
+                    </IonButton>
+                </IonCol>
+            </IonRow>
         </>
     )
 }

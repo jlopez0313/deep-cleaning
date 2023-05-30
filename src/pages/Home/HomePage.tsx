@@ -1,18 +1,20 @@
-import { IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonPage, IonToolbar, useIonAlert, useIonViewWillEnter } from '@ionic/react';
+import { IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonPage, IonPopover, IonToolbar, useIonAlert, useIonLoading, useIonViewWillEnter } from '@ionic/react';
 import Home from '@/components/home/Home';
 import styles from './HomePage.module.scss';
 import { getUser } from '@/helpers/onboarding';
 import { chevronForwardOutline, notificationsOutline, syncOutline } from 'ionicons/icons';
 import { useState } from 'react';
-import { myJob } from '@/services/visitas';
+import { myJob, myVisits } from '@/services/visitas';
+import { isUserManager, isUserCleaner } from '@/helpers/roles';
+import { Notificaciones } from '@/components/Notificaciones/Notificaciones';
 
 export const HomePage = () => {
-
-  console.log(new Date(), new Date().toISOString(), new Date().toLocaleString());
 
   const {user} = getUser();
   const [visitas, setVisitas] = useState([])
   const [presentAlert] = useIonAlert();
+  const [present, dismiss] = useIonLoading();
+
 
   const getVisitas = async() => {
     try {
@@ -28,8 +30,43 @@ export const HomePage = () => {
     }
 }
 
+  const getVisitasAdmin = async() => {
+    try {
+        const lista = await myVisits();
+        setVisitas( lista.data )
+    } catch(error: any) {
+        presentAlert({
+            header: 'Alerta!',
+            subHeader: 'Mensaje importante.',
+            message: error.data?.message || 'Error Interno',
+            buttons: ['OK'],
+        })
+    }
+  }
+
+  const doRefresh = async () => {
+    await present({
+        message: 'Loading...',
+    });
+    
+    await onGetVisitas();
+    dismiss();
+  }
+
+  const onGetVisitas = async () => {
+    if ( isUserManager() ) {
+      await getVisitasAdmin();
+    } else if ( isUserCleaner() ) {
+      await getVisitas();
+    } else {
+      await setVisitas([])
+    }
+
+    return ;
+  }
+
   useIonViewWillEnter( () => {
-    getVisitas();
+    onGetVisitas();
   })
 
   return (
@@ -42,10 +79,18 @@ export const HomePage = () => {
           </div>
           
           <IonButtons slot='end'>
-            <IonButton type='button'>
+            
+            <IonButton id="click-trigger" type='button'>
               <IonIcon icon={notificationsOutline} className='text-white' />
             </IonButton>
-            <IonButton type='button'>
+            
+            <IonPopover trigger="click-trigger" triggerAction="click">
+              <IonContent class="ion-padding">
+                <Notificaciones />
+              </IonContent>
+            </IonPopover>
+
+            <IonButton type='button' onClick={doRefresh}>
               <IonIcon icon={syncOutline} className='text-white' />
             </IonButton>
 

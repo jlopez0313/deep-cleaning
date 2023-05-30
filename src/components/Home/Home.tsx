@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonRow } from '@ionic/react';
+import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonRow, useIonViewWillEnter } from '@ionic/react';
 import './Home.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from "swiper";
@@ -6,8 +6,23 @@ import { Pagination } from "swiper";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { all } from '@/services/carrusel';
+import { getPhotoUrl } from '@/helpers/photos';
 
 const Home = ( ) => {
+
+  const [lista, setLista] = useState([]);
+
+  const getLista = async () => {
+    const lista = await all();
+    setLista( lista.data )
+  }
+
+  useIonViewWillEnter(() => {
+    getLista();
+  })
+
   return (
     <div id="container">
       <IonGrid>
@@ -18,15 +33,15 @@ const Home = ( ) => {
                 modules={[Pagination]} 
                 spaceBetween={0}
                 slidesPerView={1}
-                onSlideChange={() => console.log('slide change')}
-                onSwiper={(swiper) => console.log(swiper)}
+                // onSlideChange={() => console.log('slide change')}
+                // onSwiper={(swiper) => console.log(swiper)}
             >
               {
-                [1,1,1,1].map( (item, key) => {
+                lista.map( (item: any, key) => {
                   return (
                     <SwiperSlide key={key}>
                       <IonCard>
-                        <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+                        <img alt="" src={getPhotoUrl(item.archivo)} />
                       </IonCard>
                     </SwiperSlide>
                   )

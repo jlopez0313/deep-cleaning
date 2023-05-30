@@ -4,6 +4,7 @@ import styles from './Visita.module.scss';
 import { chevronBackOutline } from 'ionicons/icons';
 import { Maps } from '@/components/Maps/Maps';
 import { Link } from 'react-router-dom'
+import { getPhotoUrl } from '@/helpers/photos';
 
 type Servicio = {
     id: string;
@@ -32,10 +33,6 @@ export const Visita = ( {visita}: Props ) => {
     const [ data, setVisita ] = useState( visita );
     const [ height, setHeight ] = useState({ mapHeight: '75%', listHeight: '25%' })
     const [ markers, setMarkers ] = useState<any>([])
-
-    const getPhotoUrl = ( foto: string ) => {
-        return foto ? `${import.meta.env.VITE_BASE_BACK}/${foto}` : "https://ionicframework.com/docs/img/demos/card-media.png"
-    }
 
     useEffect(() => {
         setVisita(visita)
@@ -74,16 +71,16 @@ export const Visita = ( {visita}: Props ) => {
                             </IonCol>
                         </IonRow>
                         <IonRow>
-                            <IonCol>
+                            <IonCol className={styles.bordered}>
                                 <IonLabel> Horario desde: </IonLabel>
                             </IonCol>
-                            <IonCol>
+                            <IonCol className={styles.bordered}>
                                 <IonLabel> Horario hasta: </IonLabel>
                             </IonCol>
                         </IonRow>
                         <IonRow>
-                            <IonCol> <IonLabel> {visita.start_date} </IonLabel> </IonCol>
-                            <IonCol> <IonLabel> {visita.end_date} </IonLabel> </IonCol>
+                            <IonCol className={styles.bordered}> <IonLabel> {visita.start_date} </IonLabel> </IonCol>
+                            <IonCol className={styles.bordered}> <IonLabel> {visita.end_date} </IonLabel> </IonCol>
                         </IonRow>
                     </IonGrid>
                 </div>
