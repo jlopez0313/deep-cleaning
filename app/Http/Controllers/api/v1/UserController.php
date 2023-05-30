@@ -29,7 +29,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return \App\Models\User::with('rol')
-                ->latest()
+                ->orderBy( 
+                    is_null($request->sortBy) || $request->sortBy == 'null' ? 'created_at' : $request->sortBy, 
+                    is_null($request->sortType) || $request->sortType == 'null' ? 'desc' : $request->sortType
+                )
                 ->paginate( $request->rowsPerPage );
     }
 
@@ -99,10 +102,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request)
     {
-        $user->delete();
-        return $user;
+        $users = \App\Models\User::whereIn('id', $request->ids)->delete();
+        return $users;
     }
 
     public function byRol(Request $request)

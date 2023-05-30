@@ -49,7 +49,7 @@ class User extends Authenticatable
         return $this->hasOne(Roles::class, 'id', 'roles_id');
     }
 
-    public function local() {
-        return $this->hasOne(Local::class, 'id', 'locales_id');
+    public function locales() {
+        return $this->hasMany(LocalesUsers::class, 'user_id');
     }
 }

@@ -21,7 +21,7 @@ class LocalesUsers extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function visitas() {
+    public function local() {
         return $this->hasOne(Local::class, 'id', 'locales_id');
     }
 }

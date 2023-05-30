@@ -30,7 +30,7 @@ class LoginController extends Controller
 
         return response()->json([
             'token' => $request->user()->createToken($request->device)->plainTextToken,
-            'user' => $request->user()->load('rol', 'local'),
+            'user' => $request->user()->load('rol', 'locales.local'),
             'message' => 'Success'
         ]);
     }

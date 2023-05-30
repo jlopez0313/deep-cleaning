@@ -1,10 +1,14 @@
 /.phpunit.cache
 /node_modules
+
 /public/build
-/public/hot
+/public/carrusel
 /public/usuarios
 /public/storage
 /public/locales
+/public/evidencias
+/public/firmas
+
 /storage/*.key
 /vendor
 .env

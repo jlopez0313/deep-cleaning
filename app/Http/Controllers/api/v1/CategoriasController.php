@@ -20,7 +20,11 @@ class CategoriasController extends Controller
      */
     public function index(Request $request)
     {
-        return \App\Models\Categoria::latest()->paginate( $request->rowsPerPage );
+        return \App\Models\Categoria::orderBy( 
+                is_null($request->sortBy) || $request->sortBy == 'null' ? 'created_at' : $request->sortBy, 
+                is_null($request->sortType) || $request->sortType == 'null' ? 'desc' : $request->sortType
+            )
+            ->paginate( $request->rowsPerPage );
     }
 
     /**
@@ -63,9 +67,9 @@ class CategoriasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Categoria $categoria)
+    public function destroy(Request $request)
     {
-        $categoria->delete();
+        $categoria = \App\Models\Categoria::whereIn('id', $request->ids)->delete();
         return $categoria;
     }
 

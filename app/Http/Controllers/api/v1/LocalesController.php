@@ -28,7 +28,10 @@ class LocalesController extends Controller
     public function index(Request $request)
     {
         return \App\Models\Local::with('creador', 'usuarios.usuario.rol', 'visitas')
-                ->latest()
+                ->orderBy( 
+                    is_null($request->sortBy) || $request->sortBy == 'null' ? 'created_at' : $request->sortBy, 
+                    is_null($request->sortType) || $request->sortType == 'null' ? 'desc' : $request->sortType
+                )
                 ->paginate( $request->rowsPerPage );
     }
 
@@ -145,10 +148,10 @@ class LocalesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Local $locale)
+    public function destroy(Request $request)
     {
-        $locale->delete();
-        return $locale;
+        $locales = \App\Models\Local::whereIn('id', $request->ids)->delete();
+        return $locales;
     }
 
     public function all()

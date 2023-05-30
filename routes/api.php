@@ -24,6 +24,13 @@ Route::post('v1/login', ['App\Http\Controllers\api\v1\LoginController', 'login']
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
 
+    // Carrusel
+    Route::prefix('carrusel')->group( function () {
+        Route::get('all', ['App\Http\Controllers\api\v1\CarruselController', 'all']);
+        Route::post('delete', ['App\Http\Controllers\api\v1\CarruselController', 'destroy']);
+    });
+    Route::apiResource('carrusel', 'App\Http\Controllers\api\v1\CarruselController');
+
     // Estados
     Route::prefix('estados')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\EstadosController', 'all']);
@@ -40,21 +47,24 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
     Route::prefix('users')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\UserController', 'all']);
         Route::post('byRol', ['App\Http\Controllers\api\v1\UserController', 'byRol']);
-        Route::post('{id}', ['App\Http\Controllers\api\v1\UserController', 'update']);
+        Route::post('update/{id}', ['App\Http\Controllers\api\v1\UserController', 'update']);
+        Route::post('delete', ['App\Http\Controllers\api\v1\UserController', 'destroy']);
     });
     Route::apiResource('users', 'App\Http\Controllers\api\v1\UserController');
 
     // Categorias
     Route::prefix('categorias')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\CategoriasController', 'all']);
+        Route::post('delete', ['App\Http\Controllers\api\v1\CategoriasController', 'destroy']);
     });
     Route::apiResource('categorias', 'App\Http\Controllers\api\v1\CategoriasController');
     
     // Locales
     Route::prefix('locales')->group( function () {
         Route::get('all', ['App\Http\Controllers\api\v1\LocalesController', 'all']);
-        Route::post('{id}', ['App\Http\Controllers\api\v1\LocalesController', 'update']);
         Route::get('qr/{id}', ['App\Http\Controllers\api\v1\LocalesController', 'QR']);
+        Route::post('update/{id}', ['App\Http\Controllers\api\v1\LocalesController', 'update']);
+        Route::post('delete', ['App\Http\Controllers\api\v1\LocalesController', 'destroy']);
     });
     Route::apiResource('locales', 'App\Http\Controllers\api\v1\LocalesController');
 
@@ -65,8 +75,11 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
         Route::get('para-hoy/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'paraHoy']);
         Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
         Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
-        Route::post('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
         Route::put('evaluar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'evaluar']);
+        Route::post('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
+        Route::post('aprobar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'aprobar']);
+        Route::post('delete', ['App\Http\Controllers\api\v1\VisitasController', 'destroy']);
+        Route::post('locales', ['App\Http\Controllers\api\v1\VisitasController', 'locales']);
     });
     Route::apiResource('visitas', 'App\Http\Controllers\api\v1\VisitasController');
 

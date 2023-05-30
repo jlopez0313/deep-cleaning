@@ -43,8 +43,10 @@ class VisitasController extends Controller
     {
         return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
                 ->where('attended_by', $id)
-                ->orderBy('start_date', 'desc')
-                ->paginate( $request->rowsPerPage );
+                ->orderBy( 
+                    is_null($request->sortBy) || $request->sortBy == 'null' ? 'start_date' : $request->sortBy, 
+                    is_null($request->sortType) || $request->sortType == 'null' ? 'desc' : $request->sortType
+                )->paginate( $request->rowsPerPage );
     }
 
     /**
@@ -91,7 +93,7 @@ class VisitasController extends Controller
         $data = $visita;
         $data->attender = $visita->attender;
         $data->creator = $visita->creator;
-        $data->approver = $visita->creator;
+        $data->approver = $visita->approver;
         $data->local = $visita->local;
         $data->estado = $visita->estado;
 
@@ -146,10 +148,10 @@ class VisitasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Visitas $visita)
+    public function destroy(Request $request)
     {
-        $visita->delete();
-        return $visita;
+        $visitas = \App\Models\Visitas::whereIn('id', $request->ids)->delete();
+        return $visitas;
     }
     
 
@@ -244,5 +246,37 @@ class VisitasController extends Controller
                 ->where('estados_id', 1)
                 ->latest()
                 ->get();
+    }
+
+    public function locales(Request $request)
+    {
+        return \App\Models\Visitas::with('attender', 'creator', 'approver', 'local', 'estado', 'checklist')
+                ->whereIn('locales_id', $request->ids)
+                ->where('estados_id', 2)
+                ->latest()
+                ->get();
+    }
+
+    public function aprobar(VisitasRequest $request, Visitas $visita)
+    {
+        if ( $request->firma ) {
+            $file = $request->firma;
+            $visita->firma = $file->store('firmas');
+        }
+        
+        $visita->approved_by = \Auth::id();
+        $visita->approved_at = \Carbon\Carbon::parse($request->approved_at);
+        $visita->estados_id = 3;
+        $visita->save();
+        
+        $data = $visita;
+        $data->attender = $visita->attender;
+        $data->creator = $visita->creator;
+        $data->approver = $visita->creator;
+        $data->local = $visita->local;
+        $data->estado = $visita->estado;
+        $data->checklist = $visita->checklist;
+
+        return $data;
     }
 }

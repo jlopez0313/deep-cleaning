@@ -70,9 +70,11 @@ return [
     */
 
     'links' => [
+        public_path('firmas') => storage_path('app/firmas'),
         public_path('storage') => storage_path('app/public'),
         public_path('locales') => storage_path('app/locales'),
         public_path('usuarios') => storage_path('app/usuarios'),
+        public_path('carrusel') => storage_path('app/carrusel'),
         public_path('evidencias') => storage_path('app/evidencias'),
     ],
 
