@@ -12,6 +12,10 @@
         @update:itemsSelected="$event => onItemsSelected($event)"
     >
         
+        <template #item-archivo="item">
+            <img :src="getPhotoUrl( item.archivo )" class="foto" />
+        </template>
+        
         <template #item-foto="item">
             <img :src="getPhotoUrl( item.foto )" class="foto" />
         </template>
@@ -26,7 +30,7 @@
             <router-link v-if="acciones.includes('editar')" :to="`/${modulo}/${item.id}`" title="Editar" class="btn btn-outline-secondary btn-sm ms-4">
                 <i class="mdi mdi-pencil-outline"></i>
             </router-link>
-            <button v-if="acciones.includes('eliminar')" @click="emit('delete', {serverOptions, id: item.id})" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4">
+            <button v-if="acciones.includes('eliminar')" @click="emit('delete', {serverOptions, ids: [item.id]})" title="Eliminar" class="btn btn-outline-secondary btn-sm ms-4">
                 <i class="mdi mdi-delete-outline"></i>
             </button>
         </template>
@@ -50,7 +54,7 @@ const props = defineProps({
 })
 
 const onItemsSelected = () => {
-    emit('onItemsSelected', selectedItems.value);
+    emit('onItemsSelected', {serverOptions: serverOptions.value, ids: selectedItems.value});
 }
 
 const serverOptions = ref({

@@ -6,7 +6,7 @@
             <div class="card-body">
                 <h4 class="card-title"> Datos de la Visita </h4>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 mt-3">
                             <div>
                                 <label class="form-label"> Local </label>
                                 <span class="form-control"> {{ form.local.local }} </span>
@@ -16,7 +16,7 @@
                                 <span class="form-control"> {{ form.end_date }} </span>
                             </div>                        
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 mt-3">
                             <div>
                                 <label class="form-label"> Limpiador </label>
                                 <span class="form-control"> {{ form.limpiador.name }} </span>
@@ -69,6 +69,35 @@
             </div>
         </div>
 
+        <div class="card" v-if="form.estado === 3">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-lg-6 mt-3">
+                        <div>
+                            <label class="form-label"> Revisado por </label>
+                            <span class="form-control"> {{ form.approver.name }} </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-3">
+                        <div>
+                            <label class="form-label"> Fecha de Revisión </label>
+                            <span class="form-control"> {{ form.approved_at }} </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-6 mt-3">
+                        <div>
+                            <label class="form-label"> Firma: </label>
+                            <br />
+                            <img :src="getPhotoUrl(form.firma)" class="firma"/>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
     </form>
 
     <BModal v-model="showModal" scrollable centered size="md" title="Evidencia">
@@ -113,9 +142,15 @@ const initialState = {
     limpiador: {
         id: ''
     },
+    approver: {
+        name: ''
+    },
+    estado: '',
+    firma: '',
     fecha: '',
     end_date: '',
     finished_at: '',
+    approved_at: '',
     latitud: '',
     longitud: '',
     checkList: [],
@@ -139,8 +174,12 @@ const onSearch = async () => {
         form.id = id.value
         form.local = data.local
         form.fecha = data.fecha
+        form.firma = data.firma
+        form.estado = data.estados_id
         form.end_date = data.end_date
+        form.approver = data.approver
         form.finished_at = data.finished_at
+        form.approved_at = new Date(data.approved_at).toLocaleString()
         form.latitud = data.latitud
         form.longitud = data.longitud    
         form.limpiador = data.attender
@@ -195,6 +234,10 @@ i {
 .foto {
     max-width: 70px;
     max-height: 70px;
+}
+
+.firma {
+    width: 270px;
 }
 
 .modalPhoto {

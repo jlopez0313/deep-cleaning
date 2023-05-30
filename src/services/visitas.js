@@ -55,7 +55,7 @@ export const newVisita = async( formData ) => {
 }
 
 export const updateVisita = async( formData ) => {
-    return await baseApi.put(module + '/' + formData.id, formData)
+    return await baseApi.put(module + '/update/' + formData.id, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
             router.push('/login');
@@ -70,8 +70,8 @@ export const updateVisita = async( formData ) => {
     })
 }
 
-export const removeVisita = async( id ) => {
-    return await baseApi.delete(module + '/' + id)
+export const removeVisitas = async( ids ) => {
+    return await baseApi.post(module + '/delete', {ids})
     .catch((error) => {
         if( error.response.status == 401 ) {
             router.push('/login');

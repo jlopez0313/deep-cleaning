@@ -94,7 +94,7 @@ export const updateUser = async( data ) => {
     
     formData.append('_method', 'PUT')
 
-    return await baseApi.post(module + '/' + data.id, formData)
+    return await baseApi.post(module + '/update/' + data.id, formData)
     .catch((error) => {
         if( error.response.status == 401 ) {
             router.push('/login');
@@ -109,8 +109,8 @@ export const updateUser = async( data ) => {
     })
 }
 
-export const removeUser = async( id ) => {
-    return await baseApi.delete(module + '/' + id)
+export const removeUsers = async( ids ) => {
+    return await baseApi.post(module + '/delete', {ids})
     .catch((error) => {
         if( error.response.status == 401 ) {
             router.push('/login');

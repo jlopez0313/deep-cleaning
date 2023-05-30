@@ -24,6 +24,24 @@ const routes = [
         ]
     },
     {
+        path: '/carrusel',
+        component: () => import('@/layouts/Layout.vue'),
+        children: [
+            {
+                path: '',
+                component: () => import('@/views/carrusel/index.vue')
+            },
+            {
+                path: 'create',
+                component: () => import('@/views/carrusel/form.vue')
+            },
+            {
+                path: ':id',
+                component: () => import('@/views/carrusel/form.vue')
+            }
+        ]
+    },
+    {
         path: '/usuarios',
         component: () => import('@/layouts/Layout.vue'),
         children: [

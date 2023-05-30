@@ -10,7 +10,7 @@
             </div>
             
             <Datatable
-                modulo="usuarios"
+                modulo="carrusel"
                 :items="items"
                 :headers="headers"
                 :acciones="acciones"
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <Fab :action="'/usuarios/create'"></Fab>
+    <Fab :action="'/carrusel/create'"></Fab>
 </template>
 
 <script setup>
@@ -39,16 +39,14 @@ import Datatable from '@/components/Datatable.vue';
 import PageTitle from '@/components/PageTitle.vue';
 import Fab from '@/components/Fab.vue';
 
-import {getUsuarios, removeUsers}  from '@/services/usuarios';
+import {getCarrusel, removeCarrusel}  from '@/services/carrusel';
 
-const title = 'Usuarios'
+const title = 'Carrusel'
 const breadcrumb = [
     {title: title, active: true}
 ]
 const headers = [
-    { text: "Rol", value: "rol.rol" },
-    { text: "Nombre", value: "name", sortable: true },
-    { text: "Email", value: "email", sortable: true },
+    { text: "Archivo", value: "archivo" },
     { text: "Acciones", value: "acciones" }
 ]
 
@@ -70,7 +68,7 @@ const onItemsSelected = ( {serverOptions, ids} ) => {
 const loadFromServer = async( serverOptions ) => {
     try {
         isLoading.value = true;
-        const { data } = await getUsuarios( serverOptions );
+        const { data } = await getCarrusel( serverOptions );
         items.value = data.data;
         serverItemsLength.value = data.total;
     } catch (err){
@@ -89,7 +87,7 @@ const doRemove = ( {serverOptions, ids} ) => {
 
             Alerts.destroy();
             
-            await removeUsers(ids);
+            await removeCarrusel(ids);
             loadFromServer(serverOptions)
         }
     })

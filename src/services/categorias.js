@@ -85,8 +85,8 @@ export const updateCategoria = async( formData ) => {
     })
 }
 
-export const removeCategoria = async( id ) => {
-    return await baseApi.delete(module + '/' + id)
+export const removeCategorias = async( ids ) => {
+    return await baseApi.post(module + '/delete', {ids})
     .catch((error) => {
         if( error.response.status == 401 ) {
             router.push('/login');

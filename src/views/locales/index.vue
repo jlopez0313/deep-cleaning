@@ -3,12 +3,19 @@
 
     <div class="card">
         <div class="card-body">
+            <div class="mb-3 d-flex">
+                <button class="btn btn-primary ms-auto" :disabled="!selectedItems.length" title="Eliminar" @click="doRemove({ serverOptions: serverOpts, ids: selectedItems })">
+                    <i class="mdi mdi-delete-outline"></i>
+                </button>
+            </div>
+
             <Datatable
                 modulo="locales"
                 :items="items"
                 :headers="headers"
                 :acciones="acciones"
                 :serverItemsLength="serverItemsLength"
+                @onItemsSelected="onItemsSelected($event)"
                 @dataChange="loadFromServer($event)"
                 @delete="doRemove($event)"
             ></Datatable>
@@ -32,7 +39,7 @@ import Datatable from '@/components/Datatable.vue';
 import PageTitle from '@/components/PageTitle.vue';
 import Fab from '@/components/Fab.vue';
 
-import {getLocales, removeLocal}  from '@/services/locales';
+import {getLocales, removeLocales}  from '@/services/locales';
 
 const title = 'Locales'
 const breadcrumb = [
@@ -40,14 +47,24 @@ const breadcrumb = [
 ]
 const headers = [
     { text: "Logo", value: "foto" },
-    { text: "Local", value: "local" },
+    { text: "Local", value: "local", sortable: true },
     { text: "Acciones", value: "acciones" }
 ]
 
 const items = ref([]);
+const serverOpts = ref({});
+const selectedItems = ref([]);
 const isLoading = ref( false );
 const serverItemsLength = ref(0);
 const acciones = ref(['qr', 'editar', 'eliminar']);
+
+const onItemsSelected = ( {serverOptions, ids} ) => {
+    serverOpts.value = serverOptions;
+    selectedItems.value = ids.map( item => {
+        return item.id
+    })
+    console.log(selectedItems.value);
+}
 
 const loadFromServer = async( serverOptions ) => {
     try {
@@ -62,13 +79,16 @@ const loadFromServer = async( serverOptions ) => {
     }
 }
 
-const doRemove = ( {serverOptions, id}) => {
-    Alerts.confirm('Validación', 'Deseas eliminar este registro?')
+const doRemove = ( {serverOptions, ids} ) => {
+    Alerts.confirm('Validación', `Deseas eliminar ${ ids.length > 1 ? 'estos registros' : 'este registro' } ?`)
     .then( async ( {isConfirmed} ) => {
         if( isConfirmed) {
             isLoading.value = true;
             items.value = [];
-            await removeLocal(id);
+
+            Alerts.destroy();
+            
+            await removeLocales(ids);
             loadFromServer(serverOptions)
         }
     })

@@ -13,8 +13,8 @@ const Alerts = {
   update: () => {
     Swal.fire('', 'Edición exitosa!', 'success')
   },
-  destroy: (module: string, id: string | number) => {
-    Swal.fire('', `${module} #${id} eliminad@!`, 'info')
+  destroy: () => {
+    Swal.fire('', `Eliminado exitoso!`, 'success')
   },
   saved_permissions: () => {
     Swal.fire('', 'Permisos guardados!', 'success')

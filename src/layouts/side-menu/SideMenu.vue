@@ -25,6 +25,10 @@
                         <i class="mdi mdi-home-outline"></i>
                         Inicio
                     </router-link> </li>
+                    <li> <router-link to="/carrusel" @click="hideMenu()"> 
+                        <i class="mdi mdi-image-multiple"></i>
+                        Carrusel 
+                    </router-link> </li>
                     <li> <router-link to="/usuarios" @click="hideMenu()"> 
                         <i class="mdi mdi-account-circle-outline"></i>
                         Usuarios 
