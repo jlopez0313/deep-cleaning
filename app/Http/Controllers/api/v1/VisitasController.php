@@ -175,38 +175,50 @@ class VisitasController extends Controller
     }
 
     public function finalizar(VisitasRequest $request, Visitas $visita)
-    {        
-        $visita->estados_id = 2;
-        $visita->started_at = \Carbon\Carbon::parse($request->started_at);
-        $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
-        $visita->save();
+    {
 
-        $list = [];
-        foreach( json_decode($request->checklist) as $key => $checklist ) {
-            
-            $path = '';
-            if ( $checklist->evidencia ) {
-                $file = $request->evidencia[$key];
-                $path = $file->store('evidencias');
+        return $request;
+
+        \DB::beginTransaction();
+
+        try {
+            $visita->estados_id = 2;
+            $visita->started_at = \Carbon\Carbon::parse($request->started_at);
+            $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
+            $visita->save();
+    
+            $list = [];
+            foreach( json_decode($request->checklist) as $key => $checklist ) {
+                
+                $path = '';
+                if ( $checklist->evidencia ) {
+                    $file = $request->evidencia[$key];
+                    $path = $file->store('evidencias');
+                }
+    
+                \App\Models\Checklist::find($checklist->id)
+                ->update([
+                    'done' => true,
+                    'evidencia' => $path,
+                    'updated_at' => \Carbon\Carbon::now(),
+                ]);
             }
+    
+            \DB::commit();
 
-            \App\Models\Checklist::find($checklist->id)
-            ->update([
-                'done' => true,
-                'evidencia' => $path,
-                'updated_at' => \Carbon\Carbon::now(),
-            ]);
+            $data = $visita;
+            $data->attender = $visita->attender;
+            $data->creator = $visita->creator;
+            $data->approver = $visita->creator;
+            $data->local = $visita->local;
+            $data->estado = $visita->estado;
+            $data->checklist = $visita->checklist;
+    
+            return $data;
+        } catch (Exception $ex) {
+            \DB::rollback();
+            return $ex;
         }
-
-        $data = $visita;
-        $data->attender = $visita->attender;
-        $data->creator = $visita->creator;
-        $data->approver = $visita->creator;
-        $data->local = $visita->local;
-        $data->estado = $visita->estado;
-        $data->checklist = $visita->checklist;
-
-        return $data;
     }
 
     public function evaluar( Request $request, Visitas $visita)
