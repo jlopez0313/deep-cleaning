@@ -177,7 +177,7 @@ class VisitasController extends Controller
     public function finalizar(VisitasRequest $request, Visitas $visita)
     {
 
-        return $request;
+        return $request->checklist;
 
         \DB::beginTransaction();
 
