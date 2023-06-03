@@ -200,9 +200,9 @@ class VisitasController extends Controller
                     // find substring fro replace here eg: data:image/png;base64,
                     $image      = str_replace($replace, '', $image_64); 
                     $image      = str_replace(' ', '+', $image); 
-                    $path       = uniqid() . '.' . $extension;
+                    $path       = 'evidencias/' . uniqid() . '.' . $extension;
 
-                    \Storage::disk('evidencias')->put($path, base64_decode($image));
+                    \Storage::put($path, base64_decode($image));
 /*
                     $file = $request->evidencia[$key];
                     $path = $file->store('evidencias');
@@ -212,7 +212,7 @@ class VisitasController extends Controller
                 \App\Models\Checklist::find($checklist['id'])
                 ->update([
                     'done' => true,
-                    'evidencia' => $path ? 'evidencias/' . $path : null,
+                    'evidencia' => $path,
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
             }
@@ -293,10 +293,10 @@ class VisitasController extends Controller
             // find substring fro replace here eg: data:image/png;base64,
             $image      = str_replace($replace, '', $image_64); 
             $image      = str_replace(' ', '+', $image); 
-            $path       = uniqid() . '.' . $extension;
+            $path       = 'firmas/' . uniqid() . '.' . $extension;
 
-            \Storage::disk('firmas')->put($imageName, base64_decode($image));
-            $visita->firma = 'firmas/' . $path;
+            \Storage::put($path, base64_decode($image));
+            $visita->firma = $path;
 
             /*
                 $file = $request->firma;
