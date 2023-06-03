@@ -202,7 +202,7 @@ class VisitasController extends Controller
                     $image      = str_replace(' ', '+', $image); 
                     $path       = uniqid() . '.' . $extension;
 
-                    Storage::disk('evidencias')->put($path, base64_decode($image));
+                    \Storage::disk('evidencias')->put($path, base64_decode($image));
 /*
                     $file = $request->evidencia[$key];
                     $path = $file->store('evidencias');
@@ -295,7 +295,7 @@ class VisitasController extends Controller
             $image      = str_replace(' ', '+', $image); 
             $path       = uniqid() . '.' . $extension;
 
-            Storage::disk('firmas')->put($imageName, base64_decode($image));
+            \Storage::disk('firmas')->put($imageName, base64_decode($image));
             $visita->firma = 'firmas/' . $path;
 
             /*
