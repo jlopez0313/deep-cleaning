@@ -8,13 +8,13 @@ const module = '/visitas'
 export const myVisits = async () => {
     const {user} = getUser();
 
-    const localesId = user.locales.map( (local: any) => {
+    const localesId = user.locales?.map( (local: any) => {
         return local.locales_id
     })
 
     return new Promise( async(resolve, reject) => {
         try {
-            resolve( await post( module + '/locales/', { ids: localesId }, { "Content-type": "application/json" } ) )
+            resolve( await post( module + '/locales', { ids: localesId }, { "Content-type": "application/json" } ) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response.data.message)
@@ -62,12 +62,13 @@ export const findVisita = async( id: number ) => {
 }
 
 export const finishVisita = async (data: any) => {
+
     const tmpData = {...data, checklist:[...data.checklist]}
 
     tmpData.checklist = tmpData.checklist.map( (item: any) => {
         return {
             ...item,
-            evidencia: blobToFile ( item.evidencia )
+            // evidencia: blobToFile ( item.evidencia )
         }
     })
 
@@ -87,7 +88,8 @@ export const finishVisita = async (data: any) => {
 
     return new Promise( async(resolve, reject) => {
         try {
-            resolve( await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" }) )
+            // resolve( await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" } ) )
+            resolve( await post(module + '/finalizar/' + tmpData.id, tmpData, { "Content-type": "application/json" } ) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response.data.message)
@@ -102,7 +104,7 @@ export const finishVisita = async (data: any) => {
 
 export const approveVisita = async ( data: any ) => {
     const tmpData = {...data}
-    tmpData.firma = blobToFile ( data.firma )
+    // tmpData.firma = blobToFile ( data.firma )
         
     let formData = new FormData();
     
@@ -112,7 +114,8 @@ export const approveVisita = async ( data: any ) => {
 
     return new Promise( async(resolve, reject) => {
         try {
-            resolve( await post(module + '/aprobar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" }) )
+            // resolve( await post(module + '/finalizar/' + tmpData.id, formData, { "Content-type": "multipart/form-data" } ) )
+            resolve( await post(module + '/aprobar/' + tmpData.id, tmpData, { "Content-type": "application/json" }) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response.data.message)

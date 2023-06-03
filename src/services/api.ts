@@ -1,5 +1,6 @@
 import { getUser } from '@/helpers/onboarding';
 import { CapacitorHttp, HttpHeaders } from '@capacitor/core';
+import { } from '@ionic-native/http';
 
 /*
 import axios from "axios";
@@ -29,16 +30,20 @@ export const baseApi = () => {
         };
     }
 
-    const get = async (url: string, customHeaders: HttpHeaders = {}) => {
+    const get = async (url: string, customHeaders: any = {}) => {
+        const myHeaders = headers();
+        
         const options = {
             url: `${baseURL}${url}`,
             headers: { 
-                ...headers(),
+                ...myHeaders,
                 ...customHeaders
-            },
+            }
         };
 
         const response = await CapacitorHttp.get(options);
+        // const response = await axios.get( options.url, { headers: options.headers } );
+
 
         if( response.status == 200 || response.status == 201 ) {
             return Promise.resolve( response )
@@ -47,17 +52,20 @@ export const baseApi = () => {
         }
     };
     
-    const post = async (url: string, formData: any, customHeaders: HttpHeaders = {}) => {
+    const post = async (url: string, formData: any, customHeaders: any = {}) => {
+        const myHeaders = headers();
+
         const options = {
             url: `${baseURL}${url}`,
             headers: { 
-                ...headers(),
+                ...myHeaders,
                 ...customHeaders
             },
             data: formData
         };
 
         const response = await CapacitorHttp.post( options )
+        // const response = await axios.post( options.url, options.data, { headers: options.headers } );
 
         if( response.status == 200 || response.status == 201 ) {
             return Promise.resolve( response )
@@ -67,11 +75,13 @@ export const baseApi = () => {
     }
 
 
-    const put = async (url: string, formData: any, customHeaders: HttpHeaders = {}) => {
+    const put = async (url: string, formData: any, customHeaders: any = {}) => {
+        const myHeaders = headers();
+
         const options = {
             url: `${baseURL}${url}`,
             headers: { 
-                ...headers(),
+                ...myHeaders,
                 ...customHeaders
             },
             data: formData
@@ -86,11 +96,13 @@ export const baseApi = () => {
         }
     };
 
-    const remove = async (url: string, formData: any, customHeaders: HttpHeaders = {}) => {
+    const remove = async (url: string, formData: any, customHeaders: any = {}) => {
+        const myHeaders = headers();
+
         const options = {
             url: `${baseURL}${url}`,
             headers: { 
-                ...headers(),
+                ...myHeaders,
                 ...customHeaders
             },
             data: formData

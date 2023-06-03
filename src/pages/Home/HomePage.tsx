@@ -1,4 +1,4 @@
-import { IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonPage, IonPopover, IonToolbar, useIonAlert, useIonLoading, useIonViewWillEnter } from '@ionic/react';
+import { IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonPage, IonPopover, IonToolbar, useIonAlert, useIonLoading, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import Home from '@/components/home/Home';
 import styles from './HomePage.module.scss';
 import { getUser } from '@/helpers/onboarding';
@@ -24,7 +24,7 @@ export const HomePage = () => {
         presentAlert({
             header: 'Alerta!',
             subHeader: 'Mensaje importante.',
-            message: error.data?.message || 'Error Interno',
+            message: error.data?.message || 'Limpiador - Error Interno',
             buttons: ['OK'],
         })
     }
@@ -38,7 +38,7 @@ export const HomePage = () => {
         presentAlert({
             header: 'Alerta!',
             subHeader: 'Mensaje importante.',
-            message: error.data?.message || 'Error Interno',
+            message: error.data?.message || 'Manager - Error Interno',
             buttons: ['OK'],
         })
     }
@@ -65,7 +65,7 @@ export const HomePage = () => {
     return ;
   }
 
-  useIonViewWillEnter( () => {
+  useIonViewDidEnter( () => {
     onGetVisitas();
   })
 

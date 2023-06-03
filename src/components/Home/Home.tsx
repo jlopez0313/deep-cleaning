@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonRow, useIonViewWillEnter } from '@ionic/react';
+import { IonCard, IonCardContent, IonCol, IonGrid, IonIcon, IonRow, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import './Home.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from "swiper";
@@ -19,7 +19,7 @@ const Home = ( ) => {
     setLista( lista.data )
   }
 
-  useIonViewWillEnter(() => {
+  useIonViewDidEnter(() => {
     getLista();
   })
 

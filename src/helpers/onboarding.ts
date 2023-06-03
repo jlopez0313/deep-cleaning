@@ -3,7 +3,7 @@ export const clearUser = ( ) => {
 }
 
 export const setUser = ( user: any ) => {
-    return localStorage.setItem('onboarding', JSON.stringify( user ))
+    return localStorage.setItem('onboarding', JSON.stringify( user ) )
 }
 
 export const getUser = () => {

@@ -119,13 +119,16 @@ export const Detalle = ( {visita, onHasFinished}: Props ) => {
             }
             </IonList>
 
+            
             <strong> Firma: </strong>
+            <br />
+            
             <SignatureCanvas 
                 penColor='blue'
                 ref={(ref: any) => { sigPad = ref }}
-                canvasProps={{ width: 325, height: 120, className: styles.signCanvas}}
+                canvasProps={{ width: 330, height: 120, className: styles.signCanvas}}
             />
-
+            
             <IonRow>
                 <IonCol>
                     <IonButton expand="block" onClick={clear}>

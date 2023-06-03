@@ -5,12 +5,9 @@ export const login = async( formData: {} ) => {
 
     return new Promise( async (resolve, reject) => {
         const { post } = baseApi();
-
-        const headers: HttpHeaders = {};
-        headers['Content-Type'] = 'application/json';
     
         try {
-            resolve ( await post('/login', formData, headers) )
+            resolve ( await post('/login', formData, { "Content-type": "application/json" } ) )
         } catch( error: any ) {
             if (error.response) {
                 reject(error.response)

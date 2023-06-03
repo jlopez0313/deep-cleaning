@@ -28,24 +28,40 @@ export const EjecucionPage = () => {
         setFinished( true )
     }
 
-    const getDistance = (currentPosition: Position, visita: any ) => {
+    const onGetDistance = (currentPosition: Position, visita: any ) => {
         const { getDistance } = Coordinates( currentPosition, { lat: visita.local.latitud || 0, lon: visita.local.longitud || 0  } )
         return getDistance();
     }
 
     const checkPermission = async ( ) => {
-        const status = await Geolocation.checkPermissions(); 
-        if ( status ) {
-            return true;
-        } else {
+        try {
+            const status = await Geolocation.checkPermissions(); 
+
+            console.log( 'status ', status);
+
+            if ( status ) {
+                return true;
+            } else {
+                presentAlert({
+                    header: 'Alerta!',
+                    subHeader: 'No tienes permisos.',
+                    message: 'Debes habilitar permisos en los ajustes de tu app! ',
+                    buttons: ['OK'],
+                })
+    
+                Geolocation.requestPermissions();
+                return ;
+            }
+        } catch {
             presentAlert({
                 header: 'Alerta!',
                 subHeader: 'No tienes permisos.',
-                message: 'Debes habilitar permisos en los ajustes de tu app! ',
+                message: 'Debes activar tu GPS y habilitar todos los permisos en los ajustes de tu app! ',
                 buttons: ['OK'],
             })
 
-            Geolocation.requestPermissions()
+            history.goBack();
+            return ;
         }
     }
 
@@ -53,21 +69,26 @@ export const EjecucionPage = () => {
 
         const allowed = await checkPermission();
         if ( allowed ) {
-            const coordinates = await Geolocation.getCurrentPosition();        
+
+            const coordinates = await Geolocation.getCurrentPosition({
+                enableHighAccuracy: true,
+            });
+
             const visita = await findVisita( params.id )
 
             visita.data.started_at = new Date().toISOString()
             visita.data.latitud = coordinates.coords.latitude;
             visita.data.longitud = coordinates.coords.longitude;
+
+            console.log(coordinates, visita.data);            
             
-            
-            const distance = getDistance( coordinates, visita.data )
+            const distance = onGetDistance( coordinates, visita.data )
             if ( (distance * 1000) <= 30 ) {
                 await setVisita( visita.data );
             } else {
                 presentAlert({
                     header: 'Alerta!',
-                    subHeader: 'Excedes distancia.',
+                    subHeader: 'Excedes distancia: ' + (distance * 1000).toFixed() + 'mts',
                     message: 'Debes acercarte mas a la ubicación del sitio! ',
                     buttons: ['OK'],
                 })
@@ -93,7 +114,12 @@ export const EjecucionPage = () => {
                 message: 'Loading...',
             });
             try {
-                await finishVisita( visita );
+
+                
+                const rpta = await finishVisita( visita );
+                
+                console.log( rpta );
+
                 presentAlert({
                     header: 'Alerta!',
                     subHeader: 'Mensaje importante.',

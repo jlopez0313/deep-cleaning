@@ -30,8 +30,11 @@ export const Login = () => {
                 device: 'app'
             });
 
-            setUser( data );            
-            history.replace('/home')
+            await setUser( data );
+
+            setTimeout( () => {
+                history.replace('/home')
+            }, 1000) 
 
         } catch(error: any) {
             presentAlert({
