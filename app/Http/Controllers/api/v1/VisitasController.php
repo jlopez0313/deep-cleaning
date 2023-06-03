@@ -190,10 +190,10 @@ class VisitasController extends Controller
             // foreach( json_decode($request->checklist) as $key => $checklist ) {
             foreach( $request->checklist as $key => $checklist ) {
                 
-                $path = '';
+                $path = null;
                 if ( $checklist->evidencia ) {
-
-                    $file1      = explode('/',$request->evidencia[$key]);
+                    // $file1      = explode('/',$request->evidencia[$key]);
+                    $file1      = explode('/',$checklist->evidencia);
                     $file_exe   = end($file1);
                     $path       = uniqid() . $file_exe;
                     $image_data = str_replace('.'.''. $file[1]);
@@ -207,7 +207,7 @@ class VisitasController extends Controller
                 \App\Models\Checklist::find($checklist->id)
                 ->update([
                     'done' => true,
-                    'evidencia' => 'evidencias/' . $path,
+                    'evidencia' => $path ? 'evidencias/' . $path : null,
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
             }
