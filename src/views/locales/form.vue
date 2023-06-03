@@ -133,6 +133,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 import { unique } from '@/helpers/validators';
 
+
 const title = 'Locales'
 
 const breadcrumb = [
@@ -243,6 +244,21 @@ const getUsers = async() => {
     }
 }
 
+const getLocation = async () => {
+    navigator.geolocation.getCurrentPosition( 
+        ({ coords }) => {
+            markers.value = [{
+                lat: coords.latitude,
+                lng: coords.longitude,
+                draggable: true
+            }];
+        }, error => {
+            console.log( error );
+        }
+    );
+}
+
+
 const onFileChange = (e) => {
     form.foto = e.target.files[0];
     foto.value = URL.createObjectURL(form.foto);
@@ -284,6 +300,8 @@ const doSubmit = async (evt) => {
 
 if( id.value ) {
     onSearch()
+} else {
+    getLocation();
 }
 
 watch(

@@ -14,8 +14,17 @@ const props = defineProps({
 
 const map = ref( null );
 
+watch( 
+    () => props.markers,
+    newVal => {
+        removeMap();
+        loadMap();
+    }
+)
+
+
 const loadMap = () => {
-    map.value = L.map("mapContainer").setView([ props.markers[0]?.lat || 27.95, props.markers[0]?.lng  || -82.47], 8);
+    map.value = L.map("mapContainer").setView([ props.markers[0]?.lat || 27.95, props.markers[0]?.lng  || -82.47], 10);
 
     L.tileLayer(
         "http://{s}.tile.osm.org/{z}/{x}/{y}.png", 
@@ -76,14 +85,18 @@ const loadMap = () => {
 
 }
 
+const removeMap = () => {
+    if (map.value) {
+        map.value.remove();
+    }
+}
+
 onMounted( () => {
     loadMap();
 })
 
 onBeforeUnmount( () => {
-    if (map.value) {
-        map.value.remove();
-    }
+    removeMap();
 })
 </script>
 
