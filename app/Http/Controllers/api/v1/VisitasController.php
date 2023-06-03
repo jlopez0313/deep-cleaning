@@ -191,9 +191,9 @@ class VisitasController extends Controller
             foreach( $request->checklist as $key => $checklist ) {
                 
                 $path = null;
-                if ( $checklist->evidencia ) {
+                if ( $checklist['evidencia'] ) {
                     // $file1      = explode('/',$request->evidencia[$key]);
-                    $file1      = explode('/',$checklist->evidencia);
+                    $file1      = explode('/',$checklist['evidencia']);
                     $file_exe   = end($file1);
                     $path       = uniqid() . $file_exe;
                     $image_data = str_replace('.'.''. $file[1]);
@@ -204,7 +204,7 @@ class VisitasController extends Controller
 */
                 }
     
-                \App\Models\Checklist::find($checklist->id)
+                \App\Models\Checklist::find($checklist['id'])
                 ->update([
                     'done' => true,
                     'evidencia' => $path ? 'evidencias/' . $path : null,
