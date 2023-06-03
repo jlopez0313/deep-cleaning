@@ -174,10 +174,9 @@ class VisitasController extends Controller
         return $data;
     }
 
-    public function finalizar(VisitasRequest $request, Visitas $visita)
+    // public function finalizar(VisitasRequest $request, Visitas $visita)
+    public function finalizar(Request $request, Visitas $visita)
     {
-
-        return $request->all();
 
         \DB::beginTransaction();
 
@@ -192,8 +191,16 @@ class VisitasController extends Controller
                 
                 $path = '';
                 if ( $checklist->evidencia ) {
+
+                    $file1      = explode('/',$request->evidencia[$key]);
+                    $file_exe   = end($file1);
+                    $path       = uniqid() . $file_exe;
+                    $image_data = str_replace('.'.''. $file[1]);
+                    Storage::disk('evidencias')->put($path, base64_decode($image_data));
+/*
                     $file = $request->evidencia[$key];
                     $path = $file->store('evidencias');
+*/
                 }
     
                 \App\Models\Checklist::find($checklist->id)
