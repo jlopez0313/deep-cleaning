@@ -193,11 +193,16 @@ class VisitasController extends Controller
                 $path = null;
                 if ( $checklist['evidencia'] ) {
                     // $file1      = explode('/',$request->evidencia[$key]);
-                    $file1      = explode('/',$checklist['evidencia']);
-                    $file_exe   = end($file1);
-                    $path       = uniqid() . $file_exe;
-                    $image_data = str_replace('.'.''. $file[1]);
-                    Storage::disk('evidencias')->put($path, base64_decode($image_data));
+                    $image_64   = $checklist['evidencia'];
+                    $extension  = explode( '/', explode( ':', substr( $image_64, 0, strpos($image_64, ';') ) )[1] )[1];   // .jpg .png .pdf
+                    $replace    = substr($image_64, 0, strpos($image_64, ',') + 1 );
+
+                    // find substring fro replace here eg: data:image/png;base64,
+                    $image      = str_replace($replace, '', $image_64); 
+                    $image      = str_replace(' ', '+', $image); 
+                    $imageName  = uniqid() . '.' . $extension;
+
+                    Storage::disk('evidencias')->put($imageName, base64_decode($image));
 /*
                     $file = $request->evidencia[$key];
                     $path = $file->store('evidencias');
@@ -281,14 +286,22 @@ class VisitasController extends Controller
     {        
         if ( $request->firma ) {
 
-            $file1      = explode('/',$request->firma);
-            $file_exe   = end($file1);
-            $path       = uniqid() . $file_exe;
-            $image_data = str_replace('.'.''. $file[1]);
-            Storage::disk('firmas')->put($path, base64_decode($image_data));
+            $image_64   = $request->firma;
+            $extension  = explode( '/', explode( ':', substr( $image_64, 0, strpos($image_64, ';') ) )[1] )[1];   // .jpg .png .pdf
+            $replace    = substr($image_64, 0, strpos($image_64, ',') + 1 );
 
-            $file = $request->firma;
+            // find substring fro replace here eg: data:image/png;base64,
+            $image      = str_replace($replace, '', $image_64); 
+            $image      = str_replace(' ', '+', $image); 
+            $imageName  = uniqid() . '.' . $extension;
+
+            Storage::disk('firmas')->put($imageName, base64_decode($image));
             $visita->firma = 'firmas/' . $path;
+
+            /*
+                $file = $request->firma;
+                $visita->firma = $file->store('firmas');
+            */
         }
         
         $visita->approved_by = \Auth::id();
