@@ -206,7 +206,7 @@ class VisitasController extends Controller
                 \App\Models\Checklist::find($checklist->id)
                 ->update([
                     'done' => true,
-                    'evidencia' => $path,
+                    'evidencia' => 'evidencias/' . $path,
                     'updated_at' => \Carbon\Carbon::now(),
                 ]);
             }
