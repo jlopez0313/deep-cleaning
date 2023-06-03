@@ -187,7 +187,8 @@ class VisitasController extends Controller
             $visita->save();
     
             $list = [];
-            foreach( json_decode($request->checklist) as $key => $checklist ) {
+            // foreach( json_decode($request->checklist) as $key => $checklist ) {
+            foreach( $request->checklist as $key => $checklist ) {
                 
                 $path = '';
                 if ( $checklist->evidencia ) {
@@ -277,10 +278,17 @@ class VisitasController extends Controller
     }
 
     public function aprobar(VisitasRequest $request, Visitas $visita)
-    {
+    {        
         if ( $request->firma ) {
+
+            $file1      = explode('/',$request->firma);
+            $file_exe   = end($file1);
+            $path       = uniqid() . $file_exe;
+            $image_data = str_replace('.'.''. $file[1]);
+            Storage::disk('firmas')->put($path, base64_decode($image_data));
+
             $file = $request->firma;
-            $visita->firma = $file->store('firmas');
+            $visita->firma = 'firmas/' . $path;
         }
         
         $visita->approved_by = \Auth::id();
