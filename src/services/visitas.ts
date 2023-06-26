@@ -61,10 +61,29 @@ export const findVisita = async( id: number ) => {
     });
 }
 
+export const sendEvidence = async (item: any) => {
+    
+    return new Promise( async(resolve, reject) => {
+        try {
+            resolve( await post(module + '/send-evidence', { item }, { "Content-type": "application/json" } ) )
+        } catch( error: any ) {
+            if (error.response) {
+                reject(error.response.data.message)
+            } else if (error.request) {
+                reject(error.request)
+            } else {
+                reject(error.message)
+            }
+        }
+    });
+}
+
 export const finishVisita = async (data: any) => {
 
-    const tmpData = {...data, checklist:[...data.checklist]}
+    const tmpData = {...data, checklist:[...data.checklist]}    
+    delete tmpData.checklist;
 
+    /*
     tmpData.checklist = tmpData.checklist.map( (item: any) => {
         return {
             ...item,
@@ -85,6 +104,8 @@ export const finishVisita = async (data: any) => {
     });
 
     formData.set('checklist', JSON.stringify( tmpData.checklist ) )
+
+    */
 
     return new Promise( async(resolve, reject) => {
         try {

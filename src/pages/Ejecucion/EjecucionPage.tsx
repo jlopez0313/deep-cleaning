@@ -7,7 +7,7 @@ import { findVisita } from '@/services/visitas';
 import { Ejecucion } from '@/components/Ejecucion/Ejecucion';
 import { AlertConfirm } from '@/components/shared/AlertConfirm';
 import { useHistory } from 'react-router-dom'
-import { finishVisita } from '@/services/visitas';
+import { finishVisita, sendEvidence } from '@/services/visitas';
 import { Geolocation, Position } from '@capacitor/geolocation';
 import { Coordinates } from '@/helpers/Coordinates';
 
@@ -115,11 +115,12 @@ export const EjecucionPage = () => {
             });
             try {
 
-                
-                const rpta = await finishVisita( visita );
-                
-                console.log( rpta );
+                visita.checklist.forEach( async (item: any) => {
+                    await sendEvidence(item)
+                })
 
+                await finishVisita( visita );
+                
                 presentAlert({
                     header: 'Alerta!',
                     subHeader: 'Mensaje importante.',
