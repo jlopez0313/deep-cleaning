@@ -174,64 +174,36 @@ class VisitasController extends Controller
         return $data;
     }
 
+    public function sendEvidence(Request $request)
+    {
+        $image_64   = $request->item['evidencia'];
+        $extension  = explode( '/', explode( ':', substr( $image_64, 0, strpos($image_64, ';') ) )[1] )[1];
+        $replace    = substr($image_64, 0, strpos($image_64, ',') + 1 );
+
+        // find substring fro replace here eg: data:image/png;base64,
+        $image      = str_replace($replace, '', $image_64); 
+        $image      = str_replace(' ', '+', $image); 
+        $path       = 'evidencias/' . uniqid() . '.' . $extension;
+
+        \Storage::put($path, base64_decode($image));
+
+        \App\Models\Checklist::find($request->item['id'])
+        ->update([
+            'done' => true,
+            'evidencia' => $path,
+            'updated_at' => \Carbon\Carbon::now(),
+        ]);
+    }
+
     // public function finalizar(VisitasRequest $request, Visitas $visita)
     public function finalizar(Request $request, Visitas $visita)
     {
+        $visita->estados_id = 2;
+        $visita->started_at = \Carbon\Carbon::parse($request->started_at);
+        $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
+        $visita->save();
 
-        \DB::beginTransaction();
-
-        try {
-            $visita->estados_id = 2;
-            $visita->started_at = \Carbon\Carbon::parse($request->started_at);
-            $visita->finished_at = \Carbon\Carbon::parse($request->finished_at);
-            $visita->save();
-    
-            $list = [];
-            // foreach( json_decode($request->checklist) as $key => $checklist ) {
-            foreach( $request->checklist as $key => $checklist ) {
-                
-                $path = null;
-                if ( $checklist['evidencia'] ) {
-                    // $file1      = explode('/',$request->evidencia[$key]);
-                    $image_64   = $checklist['evidencia'];
-                    $extension  = explode( '/', explode( ':', substr( $image_64, 0, strpos($image_64, ';') ) )[1] )[1];   // .jpg .png .pdf
-                    $replace    = substr($image_64, 0, strpos($image_64, ',') + 1 );
-
-                    // find substring fro replace here eg: data:image/png;base64,
-                    $image      = str_replace($replace, '', $image_64); 
-                    $image      = str_replace(' ', '+', $image); 
-                    $path       = 'evidencias/' . uniqid() . '.' . $extension;
-
-                    \Storage::put($path, base64_decode($image));
-/*
-                    $file = $request->evidencia[$key];
-                    $path = $file->store('evidencias');
-*/
-                }
-    
-                \App\Models\Checklist::find($checklist['id'])
-                ->update([
-                    'done' => true,
-                    'evidencia' => $path,
-                    'updated_at' => \Carbon\Carbon::now(),
-                ]);
-            }
-    
-            \DB::commit();
-
-            $data = $visita;
-            $data->attender = $visita->attender;
-            $data->creator = $visita->creator;
-            $data->approver = $visita->creator;
-            $data->local = $visita->local;
-            $data->estado = $visita->estado;
-            $data->checklist = $visita->checklist;
-    
-            return $data;
-        } catch (Exception $ex) {
-            \DB::rollback();
-            return $ex;
-        }
+        return $visita;
     }
 
     public function evaluar( Request $request, Visitas $visita)

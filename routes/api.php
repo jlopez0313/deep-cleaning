@@ -76,6 +76,7 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function ()
         Route::get('my-list/{field}/{user}', ['App\Http\Controllers\api\v1\VisitasController', 'myList']);
         Route::put('iniciar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'iniciar']);
         Route::put('evaluar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'evaluar']);
+        Route::post('send-evidence', ['App\Http\Controllers\api\v1\VisitasController', 'sendEvidence']);
         Route::post('finalizar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'finalizar']);
         Route::post('aprobar/{visita}', ['App\Http\Controllers\api\v1\VisitasController', 'aprobar']);
         Route::post('delete', ['App\Http\Controllers\api\v1\VisitasController', 'destroy']);
